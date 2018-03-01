@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfessionalPartnerships", "ProfessionalPartnerships\ProfessionalPartnerships.csproj", "{679A6ABC-A078-4268-8C55-8D8F9245F782}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProfessionalPartnerships", "ProfessionalPartnerships\ProfessionalPartnerships.csproj", "{679A6ABC-A078-4268-8C55-8D8F9245F782}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfessionalPartnerships.Data", "ProfessionalPartnerships.Data\ProfessionalPartnerships.Data.csproj", "{BA58A9BE-BBB0-4C29-9055-509BE31A7653}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{679A6ABC-A078-4268-8C55-8D8F9245F782}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{679A6ABC-A078-4268-8C55-8D8F9245F782}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{679A6ABC-A078-4268-8C55-8D8F9245F782}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA58A9BE-BBB0-4C29-9055-509BE31A7653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA58A9BE-BBB0-4C29-9055-509BE31A7653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA58A9BE-BBB0-4C29-9055-509BE31A7653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA58A9BE-BBB0-4C29-9055-509BE31A7653}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
