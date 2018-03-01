@@ -15,6 +15,9 @@ The free Community edition of Visual Studio 2017 needs to be installed. You can 
  * ASP.net and web development
  * Node.js development
  
+## Configuration
+The application pulls the database connection string from an environment variable.  You will need to create an environment variable called (using the correct DB credentials) `ConnectionStrings:PartnershipsDatabase` with the value `Server=emeraldcampus.database.windows.net;Database=Partnerships;User Id=USER_ID_GOES_HERE;Password='PASSWORD_GOES_HERE'`
+ 
 
 ## Using Entity Framework to Generate Model Classes
 Entity Frame is able to generate the model classes necessary to communicate with the database.

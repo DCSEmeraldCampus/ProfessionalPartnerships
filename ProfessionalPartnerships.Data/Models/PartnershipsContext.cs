@@ -23,14 +23,12 @@ namespace ProfessionalPartnerships.Data.Models
         public virtual DbSet<StudentReviews> StudentReviews { get; set; }
         public virtual DbSet<Students> Students { get; set; }
 
+        public PartnershipsContext(DbContextOptions<PartnershipsContext> options) : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                // TODO Connection string
-                optionsBuilder.UseSqlServer(@"");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
