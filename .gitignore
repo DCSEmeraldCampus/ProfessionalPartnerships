@@ -380,3 +380,6 @@ typings/
 
 # next.js build output
 .next
+
+ProfessionalPartnerships/ClientApp/dist
+ProfessionalPartnerships/wwwroot/dist/
