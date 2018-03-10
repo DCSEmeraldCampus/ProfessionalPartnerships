@@ -37,6 +37,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Professional")]
         public async Task<IActionResult> Programs()
         {
             var professional = await GetCurrentProfessinal();
@@ -58,10 +59,84 @@ namespace ProfessionalPartnerships.Web.Controllers
                     EndDate = program.ProgramType.ShowTime
                          ? $"{program.EndDate.ToShortDateString()} {program.EndDate.ToShortTimeString()}"
                          : program.EndDate.ToShortDateString(),
+                    Id = program.ProgramId
                 });
             }
 
             return View(model);
+        }
+
+        [Authorize(Roles = "Professional")]
+        public async Task<IActionResult> Program(int id)
+        {
+            var professional = await GetCurrentProfessinal();
+
+            var program = _db.Programs
+                    .Where(p => p.PointOfContactProfessionalId == professional.ProfessionalId)
+                    .Where(p => p.ProgramId == id)
+                    .Include(p => p.ProgramType)
+                    .SingleOrDefault();
+
+            var model = new EditProgramViewModel();
+
+            if (program != null)
+            {
+                model.ProgramFound = true;
+
+                model.Program = program;
+                model.Semesters = _db.Semesters.ToList();
+                model.ProgramTypes = _db.ProgramTypes.ToList();
+            }
+            else
+            {
+                model.ProgramFound = false;
+                model.Program = null;
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Professional")]
+        public async Task<IActionResult> UpdateProgram(int id, EditProgramViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var professional = await GetCurrentProfessinal();
+
+                var program = _db.Programs
+                        .Where(p => p.PointOfContactProfessionalId == professional.ProfessionalId)
+                        .Where(p => p.ProgramId == id)
+                        .Include(p => p.ProgramType)
+                        .SingleOrDefault();
+
+                if (program != null)
+                {
+                    program.Description = model.Program.Description;
+                    program.SemesterId = model.Program.SemesterId;
+                    program.ProgramTypeId = model.Program.ProgramTypeId;
+                    program.AvailabilityDate = model.Program.AvailabilityDate;
+                    program.StartDate = model.Program.StartDate;
+                    program.EndDate = model.Program.EndDate;
+                    program.IsActive = model.Program.IsActive;
+                    program.MaximumStudentCount = model.Program.MaximumStudentCount;
+
+                    _db.SaveChanges();
+                    return Redirect("Programs");
+                }
+                else
+                {
+                    model.Semesters = _db.Semesters.ToList();
+                    model.ProgramTypes = _db.ProgramTypes.ToList();
+                    return View("Program", model);
+                }
+            }
+            else
+            {
+                model.Semesters = _db.Semesters.ToList();
+                model.ProgramTypes = _db.ProgramTypes.ToList();
+                return View("Program", model);
+            }
         }
 
         private async Task<Professionals> GetCurrentProfessinal()
