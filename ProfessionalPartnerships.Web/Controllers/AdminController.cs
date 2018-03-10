@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ProfessionalPartnerships.Web.Models.AdminViewModels;
 using ProfessionalPartnerships.Data.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
@@ -16,7 +17,7 @@ namespace ProfessionalPartnerships.Web.Controllers
     public class AdminController : Controller
     {
         PartnershipsContext _dbContext;
-        public  AdminController(PartnershipsContext db) 
+        public AdminController(PartnershipsContext db)
         {
             _dbContext = db;
         }
@@ -34,13 +35,13 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public ViewResult Programs()
         {
-            var model = (from p in _dbContext.Programs                       
+            var model = (from p in _dbContext.Programs
                          select new ProgramsViewModel()
                          {
                              ProgramId = p.ProgramId,
                              ProgramTypeName = _dbContext.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId).FirstOrDefault().Name,
                              SemesterName = _dbContext.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
-                             PointOfContactName = _dbContext.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().FirstName 
+                             PointOfContactName = _dbContext.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().FirstName
                                             + " " + _dbContext.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().LastName,
                              AvailabilityDate = p.AvailabilityDate,
                              StartDate = p.StartDate,
@@ -64,7 +65,11 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgram()
         {
-            return View();
+            var vm = new CreateProgramViewModel();
+            vm.SemesterOptions = _dbContext.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
+            vm.ProgramTypeOptions = _dbContext.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
+            vm.PointOfContactProfessionalOptions = _dbContext.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
+            return View(vm);
         }
 
         [HttpPost]
@@ -81,21 +86,28 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
-
+        private int? ParseNullableInt(string val)
+        {
+            int? result = null;
+            if(!string.IsNullOrEmpty(val))
+            {
+                result = int.Parse(val);
+            }
+            return result;
+        }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateProgram(ProgramsViewModel model)
+        public async Task<IActionResult> CreateProgram(CreateProgramViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _dbContext.Add(new Programs
                 {
-                    // temporarily hardcoding relationship id values for testing
-                    SemesterId = 1,
-                    ProgramTypeId = 2,
-                    PointOfContactProfessionalId = 1,
+                    SemesterId = int.Parse(model.SelectedSemesterId),
+                    ProgramTypeId = int.Parse(model.SelectedProgramTypeId),
+                    PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId),
                     AvailabilityDate = model.AvailabilityDate,
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
@@ -105,6 +117,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                     IsApproved = model.IsApproved,
                 });
                 _dbContext.SaveChanges();
+                model.CreateWasSuccessful = true;
                 return View(model);
             }
             return View(model);
