@@ -10,6 +10,8 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
 {
     public class CreateProgramViewModel
     {
+        public int ProgramId { get; set; }
+
         public List<SelectListItem> SemesterOptions { get; set; }
 
         [Required]
@@ -45,6 +47,6 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         [Required]
         public bool IsApproved { get; set; }
 
-        public bool CreateWasSuccessful { get; set; }
+        public bool ActionWasSuccessful { get; set; }
     }
 }

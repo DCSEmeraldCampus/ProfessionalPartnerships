@@ -72,6 +72,28 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditProgram(string id)
+        {
+            var program = _dbContext.Programs.Find(int.Parse(id));
+            var vm = new CreateProgramViewModel();
+            vm.SemesterOptions = _dbContext.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
+            vm.SelectedSemesterId = program.SemesterId.ToString();
+            vm.ProgramTypeOptions = _dbContext.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
+            vm.SelectedProgramTypeId = program.ProgramTypeId.ToString();
+            vm.PointOfContactProfessionalOptions = _dbContext.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
+            vm.SelectedPointOfContactProfessionalId = program.PointOfContactProfessionalId.ToString();
+            vm.IsActive = program.IsActive;
+            vm.IsApproved = program.IsApproved;
+            vm.MaximumStudentCount = program.MaximumStudentCount;
+            vm.ProgramId = program.ProgramId;
+            vm.StartDate = program.StartDate;
+            vm.AvailabilityDate = program.AvailabilityDate;
+            vm.EndDate = program.EndDate;
+            vm.Description = program.Description;
+            return View(vm);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -89,7 +111,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         private int? ParseNullableInt(string val)
         {
             int? result = null;
-            if(!string.IsNullOrEmpty(val))
+            if (!string.IsNullOrEmpty(val))
             {
                 result = int.Parse(val);
             }
@@ -117,7 +139,35 @@ namespace ProfessionalPartnerships.Web.Controllers
                     IsApproved = model.IsApproved,
                 });
                 _dbContext.SaveChanges();
-                model.CreateWasSuccessful = true;
+                model.ActionWasSuccessful = true;
+                return View(model);
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProgram(CreateProgramViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var program = _dbContext.Programs.Find(model.ProgramId);
+                _dbContext.Update(program);
+
+                program.SemesterId = int.Parse(model.SelectedSemesterId);
+                program.ProgramTypeId = int.Parse(model.SelectedProgramTypeId);
+                program.PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId);
+                program.AvailabilityDate = model.AvailabilityDate;
+                program.StartDate = model.StartDate;
+                program.EndDate = model.EndDate;
+                program.IsActive = model.IsActive;
+                program.MaximumStudentCount = model.MaximumStudentCount;
+                program.Description = model.Description;
+                program.IsApproved = model.IsApproved;
+
+                _dbContext.SaveChanges();
+                model.ActionWasSuccessful = true;
                 return View(model);
             }
             return View(model);
