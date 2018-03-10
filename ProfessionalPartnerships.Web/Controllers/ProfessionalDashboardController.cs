@@ -139,6 +139,50 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "Professional")]
+        public IActionResult New()
+        {
+            var model = new NewProgramViewModel();
+            model.Semesters = _db.Semesters.ToList();
+            model.ProgramTypes = _db.ProgramTypes.ToList();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Professional")]
+        public async Task<IActionResult> Create(NewProgramViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var professional = await GetCurrentProfessinal();
+
+                var program = new Programs();
+
+                program.Description = model.Program.Description;
+                program.SemesterId = model.Program.SemesterId;
+                program.ProgramTypeId = model.Program.ProgramTypeId;
+                program.AvailabilityDate = model.Program.AvailabilityDate;
+                program.StartDate = model.Program.StartDate;
+                program.EndDate = model.Program.EndDate;
+                program.IsActive = model.Program.IsActive;
+                program.MaximumStudentCount = model.Program.MaximumStudentCount;
+                program.PointOfContactProfessionalId = professional.ProfessionalId;
+                program.IsApproved = false;
+
+                _db.Programs.Add(program);
+
+                _db.SaveChanges();
+                return Redirect("Programs");
+            }
+            else
+            {
+                model.Semesters = _db.Semesters.ToList();
+                model.ProgramTypes = _db.ProgramTypes.ToList();
+                return View("Program", model);
+            }
+        }
+
         private async Task<Professionals> GetCurrentProfessinal()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
