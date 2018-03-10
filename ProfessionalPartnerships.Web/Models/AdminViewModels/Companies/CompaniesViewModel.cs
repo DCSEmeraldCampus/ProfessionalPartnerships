@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
 {
@@ -16,10 +19,13 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
 
         [DisplayName("Address 2")]
         public string Address2 { get; set; }
+
         [Required]
         public string City { get; set; }
+
         [Required]
         public string State { get; set; }
+
         [Required]
         public string Zip { get; set; }
 
@@ -28,6 +34,8 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
 
         [DisplayName("Primary Professional")]
         public int? PrimaryProfessionalId { get; set; }
+
+        public List<ProfessionalsViewModel> AssociatedProfessionals { get; set; }
 
         public CompaniesViewModel()
         {
@@ -45,6 +53,7 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
             this.Zip = company.Zip;
             this.IsActive = company.IsActive;
             this.PrimaryProfessionalId = company.PrimaryProfessionalId;
+            this.AssociatedProfessionals = company.Professionals.Select(x => new ProfessionalsViewModel(x)).ToList();
         }
 
         public void ApplyTo(ProfessionalPartnerships.Data.Models.Companies company)
