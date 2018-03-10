@@ -1,0 +1,100 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.ManageProfessionalsCertificationsViewModel
+
+@{
+    ViewBag.Title = "Manage Professionals Certifications";
+    Layout = "_Layout";
+}
+
+<h2>Manage Professionals Certifications</h2>
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>ProfessionalId</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>EmailAddress</th>
+            <th>Phone</th>
+            <th>CompanyId</th>
+            <th>IsActive</th>
+            <th>CertificationsCount</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Professionals)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ProfessionalId)</td>
+                <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => item.EmailAddress)</td>
+                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                <td>@Html.DisplayFor(modelItem => item.CompanyId)</td>
+                <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
+                <td>@Html.DisplayFor(modelItem => item.Certifications.Count)</td>
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ProfessionalId">Delete</a>
+                    </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>CertificationId</th>
+            <th>CertificationTypeId</th>
+            <th>ProfessionalId</th>
+            <th>EffectiveDate</th>
+            <th>ExpirationDate</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Certifications)
+        {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.CertificationId)</td>
+            <td>@Html.DisplayFor(modelItem => item.CertificationTypeId)</td>
+            <td>@Html.DisplayFor(modelItem => item.ProfessionalId)</td>
+            <td>@Html.DisplayFor(modelItem => item.EffectiveDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.Note)</td>
+            @*<td>
+            <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
+            <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
+            <a asp-action="Delete" asp-route-id="@item.ProfessionalId">Delete</a>
+        </td>*@
+        </tr>
+        }
+    </tbody>
+</table>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>CertificationTypeId</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CertificationTypes)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.CertificationTypeId)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ProfessionalId">Delete</a>
+                    </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
