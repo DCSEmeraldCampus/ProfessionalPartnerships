@@ -7,13 +7,9 @@
 
   <ItemGroup>
     <Compile Remove="NewFolder\**" />
-    <Compile Remove="Pages\**" />
     <Content Remove="NewFolder\**" />
-    <Content Remove="Pages\**" />
     <EmbeddedResource Remove="NewFolder\**" />
-    <EmbeddedResource Remove="Pages\**" />
     <None Remove="NewFolder\**" />
-    <None Remove="Pages\**" />
   </ItemGroup>
 
 
@@ -32,6 +28,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProfessionalPartnerships.Data\ProfessionalPartnerships.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\" />
   </ItemGroup>
 
 </Project>

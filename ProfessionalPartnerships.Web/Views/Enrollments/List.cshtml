@@ -1,0 +1,39 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.Enrollments>
+
+@{
+	ViewBag.Title = "Manage Enrollments";
+	Layout = "_Layout";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="table-responsive">
+	<table class="table table-hover">
+		<thead>
+		<tr>
+			<th scope="col">ID #</th>
+			<th scope="col">Student Name</th>
+			<th scope="col">Program Name</th>
+			<th scope="col">Status</th>
+		</tr>
+		</thead>
+
+		<tbody>
+		@foreach (var enrollment in Model)
+		{
+			<tr>
+				<th scope="row">@enrollment.EnrollmentId</th>
+				<td>
+					@(enrollment.Student?.FirstName + " " + enrollment.Student?.LastName)
+				</td>
+				<td>
+					@enrollment.Program?.PointOfContactProfessional?.Company?.Name
+				</td>
+				<td>
+					@enrollment.EnrollmentStatus?.Name
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+</div>
