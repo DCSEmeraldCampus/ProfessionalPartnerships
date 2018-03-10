@@ -8,50 +8,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ProfessionalPartnerships.Web.Models.AdminViewModels;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
 
     [Route("[controller]/[action]")]
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
-        PartnershipsContext _dbContext;
-        public  AdminController(PartnershipsContext db) 
-        {
-            _dbContext = db;
-        }
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        [HttpGet]
-        public async Task<IActionResult> ManageUsers()
-        {
-            ViewData.Model = new ManageUsersViewModel
-            {
-                Companies = _dbContext.Companies.ToList()
-            };
-            return View();
-        }
+       
 
-        [HttpGet]
-        public ViewResult Programs()
+        //public AdminController(PartnershipsContext db) : base(db) { }
+        public AdminController(PartnershipsContext db,
+               UserManager<ApplicationUser> userManager) : base(db)
         {
-            var model = (from p in _dbContext.Programs                       
-                         select new ProgramsViewModel()
-                         {
-                             ProgramId = p.ProgramId,
-                             ProgramTypeName = _dbContext.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId).FirstOrDefault().Name,
-                             SemesterName = _dbContext.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
-                             PointOfContactName = _dbContext.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().FirstName 
-                                            + " " + _dbContext.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().LastName,
-                             AvailabilityDate = p.AvailabilityDate,
-                             StartDate = p.StartDate,
-                             EndDate = p.EndDate,
-                             IsActive = p.IsActive,
-                             MaximumStudentCount = p.MaximumStudentCount,
-                             Description = p.Description,
-                             IsApproved = p.IsApproved
-                         });
-
-            return View(model);
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -62,8 +36,12 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateProgram()
+        public async Task<IActionResult> ManageUsers()
         {
+            ViewData.Model = new ManageUsersViewModel
+            {
+                Companies = _db.Companies.ToList()
+            };
             return View();
         }
 
@@ -81,32 +59,47 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
-
+        
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchUsers()
+        {
+            SearchUserViewModel model = new SearchUserViewModel();
+            model.Applicationuser = new List<ApplicationUser>();
+            model.roles = new List<SelectListItem>();
+            model.roles.Add (new SelectListItem { Text="Administrator",Value= "Administrator" });
+            model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
+            model.roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
+            return View(model);
+        }
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateProgram(ProgramsViewModel model)
+        public async Task<IActionResult> SearchUsers(SearchUserViewModel SelectedRole)
         {
-            if(ModelState.IsValid)
+            SearchUserViewModel model = new SearchUserViewModel();
+            var UserList = _userManager.GetUsersInRoleAsync(SelectedRole.SelectRole);
+            model.Applicationuser = new List<ApplicationUser>();
+            if (UserList.Result != null && UserList.Result.Count > 0)
             {
-                _dbContext.Add(new Programs
+                foreach (var users in UserList.Result)
                 {
-                    // temporarily hardcoding relationship id values for testing
-                    SemesterId = 1,
-                    ProgramTypeId = 2,
-                    PointOfContactProfessionalId = 1,
-                    AvailabilityDate = model.AvailabilityDate,
-                    StartDate = model.StartDate,
-                    EndDate = model.EndDate,
-                    IsActive = model.IsActive,
-                    MaximumStudentCount = model.MaximumStudentCount,
-                    Description = model.Description,
-                    IsApproved = model.IsApproved,
-                });
-                _dbContext.SaveChanges();
-                return View(model);
+                    ApplicationUser newUser = new ApplicationUser();                  
+                    newUser.UserName = users.UserName;
+                    newUser.Id = users.Id;
+                    newUser.Email = users.Email;
+                    model.Applicationuser.Add(newUser);
+                }
             }
+            else
+            {
+                ViewData["Message"] = "No Users found for Selected Role";
+            }
+            model.roles = new List<SelectListItem>();
+            model.roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
+            model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
+            model.roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
+            model.SelectRole = SelectedRole.SelectRole;
             return View(model);
         }
     }
