@@ -56,13 +56,6 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManagePrograms()
-        {
-
-            return View();
-        }
-
-        [HttpGet]
         public async Task<IActionResult> CreateProgram()
         {
             var vm = new ProgramsViewModel();
@@ -101,20 +94,6 @@ namespace ProfessionalPartnerships.Web.Controllers
             _dbContext.Remove(program);
             await _dbContext.SaveChangesAsync();
             return View();
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManagePrograms(ProgramsViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
         }
 
         private int? ParseNullableInt(string val)

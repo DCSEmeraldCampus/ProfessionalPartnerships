@@ -44,7 +44,7 @@
             </div>
         </div>
     </nav>
-    <!--/ Navigation bar-->
+    <!--/ Navigation bar-->    
     <!--Modal box-->
     <div class="modal fade" id="login" role="dialog">
         <div class="modal-dialog modal-sm">
@@ -298,27 +298,44 @@
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem nesciunt vitae,<br> maiores, magni dolorum aliquam.</p>
                     <hr class="bottom-line">
                 </div>
+                <!--Message-->
+                @{ var statusMessageObject = TempData["TempDataProperty-StatusMessage"]; }
+                @if (statusMessageObject != null && !String.IsNullOrEmpty((string)statusMessageObject))
+                {
+                    var statusMessage = (string)statusMessageObject;
+                    var statusMessageClass = statusMessage.StartsWith("Error") ? "danger" : "success";
+                        <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            @statusMessage
+                        </div>
+                }
+                <!--/ Message-->
                 <div id="sendmessage">Your message has been sent. Thank you!</div>
                 <div id="errormessage"></div>
-                <form action="" method="post" role="form" class="contactForm">
+                <form asp-action="ContactUs" asp-controller="Home" class="contactForm">
                     <div class="col-md-6 col-sm-6 col-xs-12 left">
                         <div class="form-group">
-                            <input type="text" name="name" class="form-control form" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
+                            <input type="text" name="name" class="form-control form" id="name" placeholder="Your Name" required data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
                             <div class="validation"></div>
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required data-rule="email" data-msg="Please enter a valid email" />
                             <div class="validation"></div>
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
+                            <input type="tel" pattern="\d{3}[\-]\d{3}[\-]\d{4}" name="PhoneNumber" class="form-control form" id="name"
+                                   placeholder="Your Phone Number (999-999-9999)" data-rule="tel" data-msg="Please enter a valid phone number" />
+                            <div class="validation"></div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
                             <div class="validation"></div>
                         </div>
                     </div>
 
                     <div class="col-md-6 col-sm-6 col-xs-12 right">
                         <div class="form-group">
-                            <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
+                            <textarea class="form-control" name="message" rows="5" required data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
                             <div class="validation"></div>
                         </div>
                     </div>
