@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ProfessionalPartnerships.Data.Models
 {
@@ -13,12 +14,28 @@ namespace ProfessionalPartnerships.Data.Models
         }
 
         public int ProgramId { get; set; }
+
+        [Display(Name = "Semester")]
         public int SemesterId { get; set; }
+        
+        [Display(Name = "Program Type")]
         public int ProgramTypeId { get; set; }
+
+        [Display(Name = "Availability Date")]
+        [DataType(DataType.Date)]
+
         public DateTime AvailabilityDate { get; set; }
+
+        [Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
+
+        [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
+
+        [Display(Name = "Active?")]
         public bool IsActive { get; set; }
+
+        [Display(Name = "Maximum Student Count")]
         public int MaximumStudentCount { get; set; }
         public int? PointOfContactProfessionalId { get; set; }
         public string Description { get; set; }

@@ -11,7 +11,7 @@
         @foreach(var program in Model.Programs)
         {
             <li>
-                <a href="#">@program.Company @program.ProgramType (@program.StartDate - @program.EndDate)</a>
+                <a href="Program/@program.Id">@program.Company @program.ProgramType (@program.StartDate - @program.EndDate)</a>
             </li>
         }
     </ul>
