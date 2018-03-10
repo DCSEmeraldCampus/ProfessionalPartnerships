@@ -14,9 +14,8 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
     }
     public class SearchUserViewModel
     {
-       
         public List<ApplicationUser> Applicationuser { get; set; }
-       public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
         [Required]
         public string SelectRole { get; set; }
         public Guid UserID { get; set; }
