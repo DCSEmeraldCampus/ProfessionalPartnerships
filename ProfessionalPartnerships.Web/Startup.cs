@@ -24,7 +24,7 @@ namespace ProfessionalPartnerships.Web
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public async void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -43,6 +43,31 @@ namespace ProfessionalPartnerships.Web
             });
 
             services.AddMvc();
+
+            var serviceProvider = services.BuildServiceProvider();
+            
+            await CreateRoles(serviceProvider);
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider) {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+
+            foreach(var roleName in new string[] {  "Administrator", "Student", "Professional"})
+            {
+                var existing = await roleManager.FindByNameAsync(roleName);
+
+                if (existing == null)
+                {
+                    var role = new IdentityRole
+                    {
+                        Name = roleName
+                    };
+                    await roleManager.CreateAsync(role);
+                }
+            }
+            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +84,7 @@ namespace ProfessionalPartnerships.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            
             app.UseStaticFiles();
 
             app.UseAuthentication();
@@ -69,6 +95,8 @@ namespace ProfessionalPartnerships.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-        }
+        }        
     }
+
+
 }
