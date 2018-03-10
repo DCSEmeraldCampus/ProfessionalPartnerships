@@ -8,16 +8,18 @@ using ProfessionalPartnerships.Data.Models;
 
 namespace ProfessionalPartnerships.Web.Models.AdminViewModels
 {
-    public class CreateProgramViewModel
+    public class ProgramsViewModel
     {
         public int ProgramId { get; set; }
 
         public List<SelectListItem> SemesterOptions { get; set; }
+        public string SemesterName { get; set; }
 
         [Required]
         public string SelectedSemesterId { get; set; }
 
         public List<SelectListItem> ProgramTypeOptions { get; set; }
+        public string ProgramTypeName { get; set; }
 
         [Required]
         public string SelectedProgramTypeId { get; set; }
@@ -38,7 +40,8 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         public int MaximumStudentCount { get; set; }
         
         public List<SelectListItem> PointOfContactProfessionalOptions { get; set; }
-        
+        public string PointOfContactName { get; set; }
+
         public string SelectedPointOfContactProfessionalId { get; set; }
 
         [Required]

@@ -65,7 +65,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateProgram()
         {
-            var vm = new CreateProgramViewModel();
+            var vm = new ProgramsViewModel();
             vm.SemesterOptions = _dbContext.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
             vm.ProgramTypeOptions = _dbContext.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
             vm.PointOfContactProfessionalOptions = _dbContext.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
@@ -76,7 +76,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> EditProgram(string id)
         {
             var program = _dbContext.Programs.Find(int.Parse(id));
-            var vm = new CreateProgramViewModel();
+            var vm = new ProgramsViewModel();
             vm.SemesterOptions = _dbContext.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
             vm.SelectedSemesterId = program.SemesterId.ToString();
             vm.ProgramTypeOptions = _dbContext.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
@@ -121,7 +121,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateProgram(CreateProgramViewModel model)
+        public async Task<IActionResult> CreateProgram(ProgramsViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -148,7 +148,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProgram(CreateProgramViewModel model)
+        public async Task<IActionResult> EditProgram(ProgramsViewModel model)
         {
             if (ModelState.IsValid)
             {
