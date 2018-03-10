@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Models.ManageViewModels;
 using ProfessionalPartnerships.Web.Services;
+using ProfessionalPartnerships.Web.Services.Interface;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {

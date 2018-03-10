@@ -12,6 +12,7 @@ using ProfessionalPartnerships.Web.Data;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Services;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Services.Interface;
 
 namespace ProfessionalPartnerships.Web
 {
@@ -39,6 +40,7 @@ namespace ProfessionalPartnerships.Web
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IInvitationService, InvitationService>();
 
             services.AddAuthentication().AddGoogle(googleOptions =>
             {

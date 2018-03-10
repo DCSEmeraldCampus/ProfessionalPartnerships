@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Models.AccountViewModels;
 using ProfessionalPartnerships.Web.Services;
+using ProfessionalPartnerships.Web.Services.Interface;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
@@ -22,6 +23,7 @@ namespace ProfessionalPartnerships.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IInvitationService _invitationService;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
@@ -29,11 +31,13 @@ namespace ProfessionalPartnerships.Web.Controllers
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
+            IInvitationService invitationService,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _invitationService = invitationService;
             _logger = logger;
         }
 
@@ -461,9 +465,11 @@ namespace ProfessionalPartnerships.Web.Controllers
 
         #endregion
 
-        public IActionResult InviteUser()
+        public IActionResult InviteUser(string emailAddress, string role, int companyId)
         {
-            throw new NotImplementedException();
+            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+            _invitationService.CreateInvitation(emailAddress, role, companyId, baseUrl);
+            return RedirectToAction("ManageUsers","Admin");
         }
     }
 }

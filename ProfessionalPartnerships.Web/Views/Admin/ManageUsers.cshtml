@@ -21,34 +21,39 @@
         <div class="modal-dialog modal-md">
             <!-- Modal content no 1-->
             <div class="modal-content">
-                <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title text-center">Create Invitation</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">Create Invitation</h4>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal" id="invitationForm">
+                        <div class="input-group top-buffer">
+                            <input type="email" data-error="Bruh, that email address is invalid" required class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2" name="emailAddress">
                             <span class="input-group-addon" id="basic-addon2">@@gmail.com</span>
                         </div>
-                        <div class="input-group">
-                            <label class="radio-inline"><input type="radio" id="createAdministrator" name="userType">Administrator</label>
-                            <label class="radio-inline"><input type="radio" id="createProfessional" name="userType">Professional</label>
-                            <label class="radio-inline"><input type="radio" id="createStudent" name="userType">Student</label>
+                        <div class="input-group top-buffer">
+                            <label class="radio-inline"><input type="radio" id="createAdministrator" value="Administrator" required name="role">Administrator</label>
+                            <label class="radio-inline"><input type="radio" id="createProfessional" value="Professional" required name="role">Professional</label>
+                            <label class="radio-inline"><input type="radio" id="createStudent" value="Student" required name="role">Student</label>
                         </div>
-                        <div class="input-group hide" id="companySelector">
-                            <div class="form-group">
-                                <label for="sel1">Choose Company:</label>
-                                <select class="form-control" id="sel1">
-                                    @foreach (var company in Model.Companies)
-                                    {
-                                        <option value="@company.CompanyId">@company.Name</option>
-                                    }
-                                </select>
+                        <div class="input-group top-buffer hide" id="companySelectorContainer">
+                            <select class="form-control" id="inviteCompany" type="number" name="companyId">
+                                <option value="">Choose a Company</option>
+                                @foreach (var company in Model.Companies)
+                                {
+                                    <option value="@company.CompanyId">@company.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="input-group top-buffer">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="glyphicon glyphicon-us"></span> Submit
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -57,15 +62,34 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('input[type="radio"]').click(function () {
+        $(document).ready(function() {
+            $('input[type="radio"]').click(function() {
                 if ($(this).attr('id') === 'createProfessional') {
-                    $('#companySelector').removeClass("hide");
+                    $('#companySelectorContainer').removeClass("hide");
+                    $('#inviteCompany').prop('required', true);
+                } else {
+                    $('#companySelectorContainer').addClass("hide");
+                    $('#inviteCompany').removeAttr("required");
                 }
-                else {
-                    $('#companySelector').addClass("hide");
-                }
+                $("#invitationForm").validator("update");
             });
+            //$("#invitationForm").validate({
+            //    rules: {
+            //        emailAddress: {
+            //            required: true,
+            //            email: true
+            //        },
+            //        role: {
+            //            required: true
+            //        }
+            //    },
+            //    messages: {
+            //        emailAddress: {
+            //            required: "Please provide an email address for the new user.",
+            //            email: "The email address you provided is not valid"
+            //        }
+            //    }
+            //});
         });
     </script>
 }

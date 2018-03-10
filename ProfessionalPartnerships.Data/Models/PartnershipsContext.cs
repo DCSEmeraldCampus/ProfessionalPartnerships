@@ -22,6 +22,7 @@ namespace ProfessionalPartnerships.Data.Models
         public virtual DbSet<StudentInterests> StudentInterests { get; set; }
         public virtual DbSet<StudentReviews> StudentReviews { get; set; }
         public virtual DbSet<Students> Students { get; set; }
+        public virtual DbSet<Invitations> Invitations { get; set; }
 
         public PartnershipsContext(DbContextOptions<PartnershipsContext> options) : base(options)
         {
@@ -33,6 +34,18 @@ namespace ProfessionalPartnerships.Data.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Invitations>(entity =>
+            {
+                entity.HasKey(e => e.InvitationId);
+                entity.Property(e => e.EmailAddress).IsRequired().HasMaxLength(250);
+                entity.Property(e => e.InvitationCode).IsRequired();
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.Invitations)
+                    .HasForeignKey(d => d.CompanyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Invitations_Companies");
+            });
+
             modelBuilder.Entity<Certifications>(entity =>
             {
                 entity.HasKey(e => e.CertificationId);
