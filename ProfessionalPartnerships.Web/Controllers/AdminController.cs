@@ -71,5 +71,40 @@ namespace ProfessionalPartnerships.Web.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+
+        [HttpGet]
+        public ViewResult Programs()
+        {
+            var model = (from p in _dbContext.Programs
+                         select new ProgramsViewModel()
+                         {
+                             AvailabilityDate = p.AvailabilityDate,
+                             StartDate = p.StartDate,
+                             EndDate = p.EndDate,
+                             IsActive = p.IsActive,
+                             MaximumStudentCount = p.MaximumStudentCount,
+                             Description = p.Description,
+                             IsApproved = p.IsApproved
+                        });
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddProgram(ProgramsViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                _dbContext.Add(new Programs
+                {
+
+                });
+                _dbContext.SaveChanges();
+                return View(model);
+            }
+            return View(model);
+        }
     }
 }
