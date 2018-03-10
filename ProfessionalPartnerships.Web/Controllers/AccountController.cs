@@ -460,5 +460,10 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         #endregion
+
+        public IActionResult InviteUser()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -58,6 +58,16 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ManageUsers()
+        {
+            ViewData.Model = new ManageUsersViewModel
+            {
+                Companies = _dbContext.Companies.ToList()
+            };
+            return View();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]

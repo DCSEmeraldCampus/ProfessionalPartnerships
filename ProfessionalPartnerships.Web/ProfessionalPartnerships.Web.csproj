@@ -30,8 +30,4 @@
     <ProjectReference Include="..\ProfessionalPartnerships.Data\ProfessionalPartnerships.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
-
 </Project>
