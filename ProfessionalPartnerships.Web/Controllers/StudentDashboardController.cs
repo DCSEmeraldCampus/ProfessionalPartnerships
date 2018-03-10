@@ -14,18 +14,18 @@ namespace ProfessionalPartnerships.Web.Controllers
         
         public StudentDashboardController(PartnershipsContext db) : base(db)
         {
-
+            
         }
 
-        public ActionResult Index()
-        {          
-            return View();
-        }
-
-        [HttpGet]
-        public JsonResult GetPrograms()
+        public ActionResult Index(string keyword)
         {
-            return Json(Database.Programs.ToList());
-        }
+            IEnumerable<Programs> programs = Database.Programs.ToList();
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                programs = programs.Where(x => x.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+            return View(programs);
+        }     
     }
 }
