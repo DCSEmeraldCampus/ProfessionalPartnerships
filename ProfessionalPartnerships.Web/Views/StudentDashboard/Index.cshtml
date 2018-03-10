@@ -16,9 +16,7 @@
                 if (ui.state.keyword) {
                     params.keyword = ui.state.keyword;
                 }
-                $.get('/StudentDashboard/GetPrograms',params).success(function(rows) {
-                    //TODO remove
-                    window.rows = rows;
+                $.post('/StudentDashboard/GetPrograms',params).success(function(rows) {
                     ui.setState({rows:rows});
                 });
             },
@@ -43,7 +41,19 @@
                 this.setState({keyword:''}, this.fetchData);
             },
             applyProgram: function(row) {
-                console.log(ui.state);
+                var ui = this;
+                var params = { programId : row.programId };
+                $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
+                    if (result.error) {
+                        alert(result.error);
+                        return;
+                    }
+                    Object.keys(result).forEach(function(key) {
+                        row[key] = result[key];
+                    })
+                    ui.setState({rows:ui.state.rows});
+                    console.log(result);
+                });
             },
             renderActionCol: function(row, rowIdx, colIdx) {
                 var ui = this;
