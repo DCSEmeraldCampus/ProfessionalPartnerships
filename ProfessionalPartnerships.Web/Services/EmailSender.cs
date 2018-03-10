@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
+
 namespace ProfessionalPartnerships.Web.Services
 {
     // This class is used by the application to send email for account confirmation and password reset.
