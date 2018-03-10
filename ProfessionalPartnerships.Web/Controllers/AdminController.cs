@@ -94,6 +94,15 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> DeleteProgram(string id)
+        {
+            var program = _dbContext.Programs.Find(int.Parse(id));
+            _dbContext.Remove(program);
+            await _dbContext.SaveChangesAsync();
+            return View();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -138,7 +147,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                     Description = model.Description,
                     IsApproved = model.IsApproved,
                 });
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 model.ActionWasSuccessful = true;
                 return View(model);
             }
@@ -166,7 +175,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 program.Description = model.Description;
                 program.IsApproved = model.IsApproved;
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
                 model.ActionWasSuccessful = true;
                 return View(model);
             }
