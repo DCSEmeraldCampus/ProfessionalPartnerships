@@ -1,0 +1,16 @@
+﻿@model ProfessionalPartnerships.Data.Models.Semesters
+@{
+    ViewData["Title"] = "Edit Semester";
+}
+
+<h2>Edit Semester</h2>
+@using (Html.BeginForm("EditSemester", "Semesters", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.SemesterId)
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Edit" />
+
+}
+

@@ -1,4 +1,6 @@
 ﻿<!DOCTYPE html>
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 <html>
 <head>
     <meta charset="utf-8" />
@@ -8,6 +10,7 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/dashboard.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -17,81 +20,87 @@
     </environment>
 </head>
 <body>
+    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
 
-<div class="container">
-  <div class="jumbotron text-center">
-    <h1>Professional Partnerships</h1>
-		@if (User.IsInRole("Student"))
-		{
-			<p>Student Dashboard</p> 
-		}
-		@if (User.IsInRole("Administrator"))
-		{
-			<p>Admin Dashboard</p> 
-		}
-		@if (User.IsInRole("Professional"))
-		{
-			<p>Pro Dashboard</p> 
-		}
-	<div>@await Html.PartialAsync("_LoginPartial")</div>
-  </div>  
-</div>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Professional Partnerships</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Dashboard</a></li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li><a href="#">Hello @UserManager.GetUserName(User)!</a> </li>
+                            <li><button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </form>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                @if (User.IsInRole("Student"))
+                {
+                    <ul class="nav nav-sidebar">
+                        <li><a href="#">My Programs @*<span class="sr-only">(current)</span>*@</a></li>
+                    </ul>
+                }
+                @if (User.IsInRole("Administrator"))
+                {
+                    <ul class="nav nav-sidebar">
+                        <li><a href="">Manage Users</a></li>
+                        <li><a href="">Manage Companies</a></li>
+                        <li><a href="">Manage Programs</a></li>
+                        <li><a href="">Manage System</a></li>
+                        <li><a href="">Manage Reviews</a></li>
+                        <li><a href="">Manage Connections</a></li>
+                    </ul>
+                }
+                @if (User.IsInRole("Professional"))
+                {
+                    <ul class="nav nav-sidebar">
+                        <li><a href="">Manage Users</a></li>
+                        <li><a href="">My Programs</a></li>
+                    </ul>
+                }
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                @RenderBody()
+            </div>
+        </div>
 
-	@if (User.Identity.IsAuthenticated == true)
-	{
-	  <nav class="navbar navbar-inverse navbar-fixed-left" style=" width: 250px">
-		@if (User.IsInRole("Student"))
-		{
-		<ul>			
-			<li><a href="../StudentDashboard">My Programs</a></li>
-		</ul>
-		}
-		@if (User.IsInRole("Administrator"))
-		{
-		<ul>			
-			<li><a href="#">Manage Users</a></li>
-			<li><a href="#">Manage Companies</a></li>
-			<li><a href="#">Manage Programs</a></li>
-			<li><a href="../ManageSystem">Manage System</a></li>
-			<li><a href="#">View Reviews</a></li>
-			<li><a href="#">Manage Connections</a></li>
-		</ul>
-		}
-		@if (User.IsInRole("Professional"))
-		{
-		<ul>			
-			<li><a href="#">Manage Pros</a></li>
-			<li><a href="#">Manage Programs</a></li>
-		</ul>
-		}
-    </nav>
-	}
-<div class="container">
-    <div class="container body-content">		
-        @RenderBody()
+        <environment include="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+        </environment>
+        <environment exclude="Development">
+            <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery"
+                    crossorigin="anonymous"
+                    integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+            </script>
+            <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                    crossorigin="anonymous"
+                    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+            </script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+        </environment>
+
+        @RenderSection("Scripts", required: false)
     </div>
-
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
-
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

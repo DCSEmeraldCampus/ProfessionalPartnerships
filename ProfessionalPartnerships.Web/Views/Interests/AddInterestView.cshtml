@@ -1,0 +1,15 @@
+﻿@model ProfessionalPartnerships.Data.Models.Interests
+@{
+    ViewData["Title"] = "Add Interest";
+}
+
+<h2>Add Interest</h2>
+@using (Html.BeginForm("AddInterest", "Interests", FormMethod.Post))
+{
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Add" />
+
+}
+

@@ -1,0 +1,31 @@
+﻿@model List<ProfessionalPartnerships.Web.Models.AdminViewModels.CompaniesViewModel>;
+@{
+    ViewData["Title"] = "View Companies";
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<table class="table-bordered  table-responsive">
+    <tr class="row">
+        <th>Name</th>
+        <th>Address1</th>
+        <th>Address2</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+        <th>Is Active</th>
+    </tr>
+    @foreach(var company in Model)
+    {
+    <tr class="row">
+        <td>@company.Name</td>
+        <td>@company.Address1</td>
+        <td>@company.Address2</td>
+        <td>@company.City</td>
+        <td>@company.State</td>
+        <td>@company.Zip</td>
+        <td>@company.IsActive</td>
+    </tr>
+    }
+    
+</table>

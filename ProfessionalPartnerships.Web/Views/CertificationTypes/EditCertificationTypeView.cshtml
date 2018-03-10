@@ -1,0 +1,16 @@
+﻿@model ProfessionalPartnerships.Data.Models.CertificationTypes
+@{
+    ViewData["Title"] = "Edit Certification Type";
+}
+
+<h2>Edit Certification Type</h2>
+@using (Html.BeginForm("EditCertificationType", "CertificationTypes", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.CertificationTypeId)
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Edit" />
+
+}
+
