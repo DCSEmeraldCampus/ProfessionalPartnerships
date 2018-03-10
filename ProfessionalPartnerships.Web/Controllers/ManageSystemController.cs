@@ -56,5 +56,17 @@ namespace ProfessionalPartnerships.Web.Controllers
             var skills = _db.Skills.ToList();
             return View(skills);
         }
+
+        public IActionResult AddCertificationTypeView()
+        {
+            return View();
+        }
+
+        public IActionResult AddCertificationType(CertificationTypes type)
+        {
+            _db.CertificationTypes.Add(type);
+            _db.SaveChanges();
+            return RedirectToAction("CertificationTypes");
+        }
     }
 }
