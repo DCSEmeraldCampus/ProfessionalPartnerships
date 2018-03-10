@@ -8,16 +8,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
 using ProfessionalPartnerships.Web.Models;
+using ProfessionalPartnerships.Web.Models.DashboardViewModels;
+using ProfessionalPartnerships.Web.Services;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
     public class HomeController : Controller
     {
         PartnershipsContext _db;
+        private readonly IEmailSender _emailSender;
 
-        public HomeController(PartnershipsContext db)
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        public HomeController(PartnershipsContext db, IEmailSender emailSender)
         {
             _db = db;
+            _emailSender = emailSender;
         }
 
 
@@ -61,6 +68,35 @@ namespace ProfessionalPartnerships.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ContactUs(ContactUsViewModel model)
+        {
+            var localUrl = Url.Action(nameof(Index), controller: null, values: null, protocol: null, host: null, fragment: "contact");
+            if (!ModelState.IsValid)
+            {
+                StatusMessage = "Error: " + String.Join(Environment.NewLine, ModelState.Values.SelectMany(v => v.Errors.Select(b => b.ErrorMessage)));
+                return new LocalRedirectResult(localUrl);
+            }
+
+            var message = $@"
+-Contact Info-
+Name: {model.Name}
+Email: {model.Email}
+Phone Number: {model.PhoneNumber}
+
+-Email-
+Subject: {model.Subject}
+Message: {model.Message}
+";
+
+            //TODO: put email in db config setting
+            await _emailSender.SendEmailAsync("DublinEmeraldCampus@gmail.com", "Contact Us Message", message);
+
+            StatusMessage = "Email sent successfully!";
+            return new LocalRedirectResult(localUrl);
         }
 
         //public async Task<IActionResult> SendEmail()
