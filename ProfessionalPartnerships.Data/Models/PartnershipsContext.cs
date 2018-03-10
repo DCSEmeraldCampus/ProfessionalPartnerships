@@ -229,7 +229,7 @@ namespace ProfessionalPartnerships.Data.Models
             {
                 entity.HasKey(e => e.ProgramId);
 
-                entity.Property(e => e.ProgramId).ValueGeneratedNever();
+                //entity.Property(e => e.ProgramId).ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
