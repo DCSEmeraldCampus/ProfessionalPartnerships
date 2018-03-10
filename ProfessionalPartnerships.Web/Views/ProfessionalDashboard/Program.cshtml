@@ -1,0 +1,66 @@
+﻿@model ProfessionalPartnerships.Web.Models.ProfessionalViewModels.EditProgramViewModel
+@{
+    ViewBag.Title = "Professinal Dashboard - Edit Program";
+    Layout = "_Layout";
+}
+<h2>Edit Program</h2>
+<hr />
+
+@if (Model.ProgramFound)
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="UpdateProgram/@Model.Program.ProgramId" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Program.Description" class="control-label"></label>
+                    <textarea asp-for="Program.Description" class="form-control" required></textarea>
+                    <span asp-validation-for="Program.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.SemesterId" class="control-label"></label>
+                    @Html.DropDownListFor(model => model.Program.SemesterId, new SelectList(Model.Semesters, "SemesterId", "Name"))
+                    <span asp-validation-for="Program.SemesterId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.ProgramTypeId" class="control-label"></label>
+                    @Html.DropDownListFor(model => model.Program.ProgramTypeId, new SelectList(Model.ProgramTypes, "ProgramTypeId", "Name"))
+                    <span asp-validation-for="Program.ProgramTypeId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.AvailabilityDate" class="control-label"></label>
+                    <input asp-for="Program.AvailabilityDate" />
+                    <span asp-validation-for="Program.AvailabilityDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.StartDate" class="control-label"></label>
+                    <input asp-for="Program.StartDate" />
+                    <span asp-validation-for="Program.StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.EndDate" class="control-label"></label>
+                    <input asp-for="Program.EndDate" />
+                    <span asp-validation-for="Program.EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Program.IsActive" class="control-label"></label>
+                    <input asp-for="Program.IsActive" />
+                    <span asp-validation-for="Program.IsActive" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Program.MaximumStudentCount" class="control-label"></label>
+                    <input asp-for="Program.MaximumStudentCount" />
+                    <span asp-validation-for="Program.MaximumStudentCount" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
+else
+{
+    <h3>The Program was not found</h3>
+}
