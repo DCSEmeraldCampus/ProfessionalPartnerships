@@ -9,12 +9,13 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
     public class ProgramsViewModel
     {
         [Required]
+        public int ProgramId { get; set; }
+        [Required]
         public DateTime AvailabilityDate { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
 
-        [Required]
         public DateTime EndDate { get; set; }
 
         [Required]
@@ -28,5 +29,10 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
 
         [Required]
         public bool IsApproved { get; set; }
+
+        public string ProgramTypeName { get; set; }
+        public string SemesterName { get; set; }
+        public string PointOfContactName { get; set; }
+
     }
 }

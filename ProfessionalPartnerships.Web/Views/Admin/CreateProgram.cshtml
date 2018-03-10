@@ -1,0 +1,88 @@
+﻿@model ProfessionalPartnerships.Data.Models.Programs
+
+@{
+    ViewData["Title"] = "Create Program";
+}
+
+<h2>AddPrograms</h2>
+
+<h4>Programs</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddPrograms">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProgramId" class="control-label"></label>
+                <input asp-for="ProgramId" class="form-control" />
+                <span asp-validation-for="ProgramId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SemesterId" class="control-label"></label>
+                <input asp-for="SemesterId" class="form-control" />
+                <span asp-validation-for="SemesterId" class="text-danger"></span>
+            </div>
+            @*@Html.DropDownListFor(model => model.SemesterId, new SelectList(Model.Semester, "SemesterId", "Name"))*@
+            <div class="form-group">
+                <label asp-for="ProgramTypeId" class="control-label"></label>
+                <input asp-for="ProgramTypeId" class="form-control" />
+                <span asp-validation-for="ProgramTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailabilityDate" class="control-label"></label>
+                <input asp-for="AvailabilityDate" class="form-control" />
+                <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaximumStudentCount" class="control-label"></label>
+                <input asp-for="MaximumStudentCount" class="form-control" />
+                <span asp-validation-for="MaximumStudentCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PointOfContactProfessionalId" class="control-label"></label>
+                <input asp-for="PointOfContactProfessionalId" class="form-control" />
+                <span asp-validation-for="PointOfContactProfessionalId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsApproved" /> @Html.DisplayNameFor(model => model.IsApproved)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

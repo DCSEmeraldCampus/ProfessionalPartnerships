@@ -1,17 +1,20 @@
 ﻿@model IEnumerable<ProfessionalPartnerships.Web.Models.AdminViewModels.ProgramsViewModel>
 
 @{
-    ViewData["Title"] = "Programs";
+    ViewData["Title"] = "Manage Programs";
 }
 
 <h2>Programs</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CreateProgram">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th>@Html.DisplayNameFor(model => model.ProgramTypeName)</th>
+            <th>@Html.DisplayNameFor(model => model.SemesterName)</th>
+            <th>@Html.DisplayNameFor(model => model.PointOfContactName)</th>
                 <th>
                     @Html.DisplayNameFor(model => model.AvailabilityDate)
                 </th>
@@ -39,6 +42,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>@Html.DisplayNameFor(model => model.ProgramTypeName)</td>
+            <td>@Html.DisplayNameFor(model => model.SemesterName)</td>
+            <td>@Html.DisplayNameFor(model => model.PointOfContactName)</td>
             <td>
                 @Html.DisplayFor(modelItem => item.AvailabilityDate)
             </td>
@@ -61,9 +67,9 @@
                 @Html.DisplayFor(modelItem => item.IsApproved)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "EditProgram", new { id=item.ProgramId }) |
+                @Html.ActionLink("Details", "ProgramDetails", new {  id=item.ProgramId  }) |
+                @Html.ActionLink("Delete", "DeleteProgram", new {  id=item.ProgramId })
             </td>
         </tr>
 }
