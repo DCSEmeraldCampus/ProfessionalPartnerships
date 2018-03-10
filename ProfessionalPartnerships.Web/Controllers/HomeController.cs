@@ -4,10 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ProfessionalPartnerships.Web.Models;
-    
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Models;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
@@ -57,5 +56,13 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //public async Task<IActionResult> SendEmail()
+        //{
+        //    EmailSender sender = new EmailSender(_configuration);
+        //    await sender.SendEmailAsync("rick@rickdoes.net", "Dublin Emerald Campus Email Test",
+        //        "<p>This is your test email</p>");
+        //    return StatusCode(200);
+        //}
     }
 }
