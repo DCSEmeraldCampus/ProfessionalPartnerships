@@ -10,19 +10,25 @@
 @section Scripts {
     <script>
         var App = React.createClass({
-            cols: [{display:'Description', col:'description'},
-                    {display:'Max Student Count', col: 'maximumStudentCount'}],
             fetchData: function(keyword) {
                 var ui = this;
                 var params = {}
                 if (ui.state.keyword) {
                     params.keyword = ui.state.keyword;
                 }
-                $.get('/StudentDashboard/GetPrograms',params).success(function(rows) {
+                $.post('/StudentDashboard/GetPrograms',params).success(function(rows) {
                     ui.setState({rows:rows});
                 });
             },
             getInitialState: function() {
+
+                this.cols = [
+                    {display:'Type', col:'programTypeName'},
+                    {display:'Description', col:'description'},
+                    {display:'Max Student Count', col: 'maximumStudentCount'},
+                    {display:'Enrolled Count', col:'enrolledCount'},
+                    {display:'Action', render: this.renderActionCol}];
+
                 return { rows: [] };
             },
             componentDidMount: function() {
@@ -32,14 +38,41 @@
                 this.setState({keyword: evt.target.value})
             },
             reset: function() {
-                this.setState({keyword:''});
-                this.fetchData();
+                this.setState({keyword:''}, this.fetchData);
+            },
+            applyProgram: function(row) {
+                var ui = this;
+                var params = { programId : row.programId };
+                $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
+                    if (result.error) {
+                        alert(result.error);
+                        return;
+                    }
+                    Object.keys(result).forEach(function(key) {
+                        row[key] = result[key];
+                    })
+                    ui.setState({rows:ui.state.rows});
+                    console.log(result);
+                });
+            },
+            renderActionCol: function(row, rowIdx, colIdx) {
+                var ui = this;
+                var applyButton = R("button", { className: "btn btn-primary", onClick: ui.applyProgram.bind(ui, row)}, "Apply")
+                var actionElement = applyButton;
+                if (row.enrollmentStatus) {
+                    actionElement = R("span", row.enrollmentStatus);
+                } else if (row.enrolledCount >= row.maximumStudentCount) {
+                    actionElement = R("span",  "Filled")
+                }
+                return R("td",{key: 'col' + rowIdx }, actionElement);
             },
             render: function () {
                 var ui = this;
                 var makeRows = function() {
-                    return ui.state.rows.map(function(row,i) {
-                        return R("tr",{key:i}, ui.cols.map(function(col, i) { return R("td", {key: i}, row[col.col]) }));
+                    return ui.state.rows.map(function(row,rowIdx) {
+                        return R("tr",{key:rowIdx}, ui.cols.map(function(col, colIdx) {
+                            return col.render != undefined ? col.render(row, rowIdx, colIdx) : R("td", {key: colIdx}, row[col.col]);
+                        }));
                     })
                 }
                 var makeTable = function() {
