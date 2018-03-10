@@ -18,7 +18,7 @@
                 <th>
                     @Html.DisplayNameFor(model => model.AvailabilityDate)
                 </th>
-                <th>
+                @*<th>
                     @Html.DisplayNameFor(model => model.StartDate)
                 </th>
                 <th>
@@ -29,26 +29,26 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.MaximumStudentCount)
-                </th>
-                <th>
+                </th>*@
+                <th width="50%">
                     @Html.DisplayNameFor(model => model.Description)
                 </th>
-                <th>
+                @*<th>
                     @Html.DisplayNameFor(model => model.IsApproved)
-                </th>
+                </th>*@
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>@Html.DisplayNameFor(model => model.ProgramTypeName)</td>
-            <td>@Html.DisplayNameFor(model => model.SemesterName)</td>
-            <td>@Html.DisplayNameFor(model => model.PointOfContactName)</td>
+            <td>@Html.DisplayFor(modelItem => item.ProgramTypeName)</td>
+            <td>@Html.DisplayFor(modelItem => item.SemesterName)</td>
+            <td>@Html.DisplayFor(modelItem => item.PointOfContactName)</td>
             <td>
                 @Html.DisplayFor(modelItem => item.AvailabilityDate)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
             <td>
@@ -59,13 +59,13 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MaximumStudentCount)
-            </td>
-            <td>
+            </td>*@
+            <td width="50%">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.IsApproved)
-            </td>
+            </td>*@
             <td>
                 @Html.ActionLink("Edit", "EditProgram", new { id=item.ProgramId }) |
                 @Html.ActionLink("Details", "ProgramDetails", new {  id=item.ProgramId  }) |
