@@ -5,53 +5,67 @@
 
 <h3>Programs</h3>
 
-<!-- if I had a javsacript framework I would do this differently -->
-<div>
-    Keyword: <input type="text" id="Keyword" />
-    <button type="button" class="btn btn-primary" id="Search">Search</button>
-    <button type="button" class="btn btn-secondary" id="Reset">Reset</button>
-</div>
-<div id="ProgramTable">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Max Student Count</th>
-            </tr>
-        </thead>
-        @foreach (var program in Model)
-    {
-        <tr>
-            <td>@program.Description</td>
-            <td>@program.MaximumStudentCount</td>
-        </tr>
-    }
-    </table>
-    
-</div>
+<div id="react-root"></div>
+
 @section Scripts {
     <script>
-        $(function () {
-
-            function RefreshTable(keyword) {
-                var args = {}
-                if (keyword) {
-                    args.keyword = keyword;
+        var App = React.createClass({
+            cols: [{display:'Description', col:'description'},
+                    {display:'Max Student Count', col: 'maximumStudentCount'}],
+            fetchData: function(keyword) {
+                var ui = this;
+                var params = {}
+                if (ui.state.keyword) {
+                    params.keyword = ui.state.keyword;
                 }
-                $.post('/StudentDashboard/',args).success(function (html) {
-                    $('#ProgramTable').html($(html).find('#ProgramTable'))
-                })
+                $.get('/StudentDashboard/GetPrograms',params).success(function(rows) {
+                    ui.setState({rows:rows});
+                });
+            },
+            getInitialState: function() {
+                return { rows: [] };
+            },
+            componentDidMount: function() {
+                this.fetchData();
+            },
+            setKeyword: function(evt) {
+                this.setState({keyword: evt.target.value})
+            },
+            reset: function() {
+                this.setState({keyword:''});
+                this.fetchData();
+            },
+            render: function () {
+                var ui = this;
+                var makeRows = function() {
+                    return ui.state.rows.map(function(row,i) {
+                        return R("tr",{key:i}, ui.cols.map(function(col, i) { return R("td", {key: i}, row[col.col]) }));
+                    })
+                }
+                var makeTable = function() {
+                    return R("table", { className: "table" }, [
+                        Rs("thead",
+                            R("tr", ui.cols.map(function (col, i) { return R("td", {key: i}, col.display) }))),
+                        R("tbody",makeRows())
+                    ]);
+                }
+                var makeFilters = function() {
+                    return Rs("div",
+                                R("label", "Keyword"),
+                                R("input", {type: 'text', value: ui.state.keyword, onChange: ui.setKeyword}),
+                                R("button",{onClick: function() { ui.fetchData()}, className:"btn btn-primary" }, "Search"),
+                                R("button",{onClick: ui.reset, className:"btn btn-secondary" }, "Reset")
+                    );
+                }
+                return Rs("div",
+                    makeFilters(),
+                    makeTable()
+                );
             }
-            $('#Search').click(function () {
-                RefreshTable($('#Keyword').val());               
-            })
-            $('#Reset').click(function () {
-                $('#Keyword').val('');
-                RefreshTable();
+        });
 
-            })
-        })
-        
+        var root = document.getElementById("react-root");
+        var app = React.createElement(App);
+        ReactDOM.render(app, root);
     </script>
-    
 }
