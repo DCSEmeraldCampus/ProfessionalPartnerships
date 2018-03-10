@@ -1,8 +1,12 @@
-﻿@model ProfessionalPartnerships.Web.Pages.ProfessionalDashboard.ProfessionalDashboardViewModel
+﻿@model ProfessionalPartnerships.Models.ProfessionalDashboard.ProfessionalDashboardViewModel
 
 @{
     ViewBag.Title = "title";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+<h2>Professional Dashboard</h2>
+
+<p>
+@Model.Company.Name
+</p>
