@@ -22,4 +22,8 @@
     <Folder Include="NewFolder\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ProfessionalPartnerships.Data\ProfessionalPartnerships.Data.csproj" />
+  </ItemGroup>
+
 </Project>

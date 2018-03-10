@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProfessionalPartnerships.Web.Data;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Services;
+using ProfessionalPartnerships.Data.Models;
 
 namespace ProfessionalPartnerships.Web
 {
@@ -28,6 +29,9 @@ namespace ProfessionalPartnerships.Web
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<PartnershipsContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
