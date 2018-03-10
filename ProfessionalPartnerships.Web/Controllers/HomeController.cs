@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Constants;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Models.DashboardViewModels;
 using ProfessionalPartnerships.Web.Services;
@@ -92,8 +93,13 @@ Subject: {model.Subject}
 Message: {model.Message}
 ";
 
-            //TODO: put email in db config setting
-            await _emailSender.SendEmailAsync("DublinEmeraldCampus@gmail.com", "Contact Us Message", message);
+            var emailAddressValue = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemEmailAddress);
+
+            if(emailAddressValue == null)
+            {
+                throw new ApplicationException($"No ConfigurationValue configured with Key '{ConfigurationValueKeys.SystemEmailAddress}'");
+            }
+            await _emailSender.SendEmailAsync(emailAddressValue.Value, "Contact Us Message", message);
 
             StatusMessage = "Email sent successfully!";
             return new LocalRedirectResult(localUrl);

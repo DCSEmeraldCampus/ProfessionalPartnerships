@@ -1,0 +1,11 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.ConfigurationValues>
+@{
+    ViewData["Title"] = "Configuration Values";
+}
+<h1>Configuration Values</h1>
+<table>
+    @foreach (var type in Model)
+    {
+        <tr><td>@type.Key</td><td>@type.Value</td></tr>
+    }
+</table>

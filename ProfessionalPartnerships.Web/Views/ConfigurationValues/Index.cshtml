@@ -1,0 +1,32 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.ConfigurationValues>
+@{
+    ViewData["Title"] = "Configuration Values";
+
+}
+
+<h1>Configuration Values</h1>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Key</th>
+                <th scope="col">Value</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var configValue in Model)
+            {
+            <tr>
+                <td>@configValue.Key</td>
+                <td>@configValue.Value</td>
+                <td>
+                    <a asp-area="" asp-controller="ConfigurationValues" asp-action="EditConfigurationValueView" asp-route-id=@configValue.ConfigurationValueId>edit</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
