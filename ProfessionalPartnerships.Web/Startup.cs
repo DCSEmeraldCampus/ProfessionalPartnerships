@@ -12,6 +12,7 @@ using ProfessionalPartnerships.Web.Data;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Services;
 using ProfessionalPartnerships.Data.Models;
+using Microsoft.Extensions.Logging;
 
 namespace ProfessionalPartnerships.Web
 {
@@ -30,8 +31,15 @@ namespace ProfessionalPartnerships.Web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //uncomment to enable SQL logging
+            Microsoft.Extensions.Logging.ILoggerFactory loggerFactory = new Microsoft.Extensions.Logging.LoggerFactory().AddConsole().AddDebug();
+
             services.AddDbContext<PartnershipsContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+               //uncomment to enable SQL logging
+               .UseLoggerFactory(loggerFactory)
+
+              );
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
