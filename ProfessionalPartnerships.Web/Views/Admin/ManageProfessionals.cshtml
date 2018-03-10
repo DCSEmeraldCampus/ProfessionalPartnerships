@@ -21,6 +21,7 @@
             <th>CompanyId</th>
             <th>IsActive</th>
             <th>CertificationsCount</th>
+            <th>CreateCertification</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +36,13 @@
                 <td>@Html.DisplayFor(modelItem => item.CompanyId)</td>
                 <td>@Html.DisplayFor(modelItem => item.IsActive)</td>
                 <td>@Html.DisplayFor(modelItem => item.Certifications.Count)</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-target="#createCertification" data-toggle="modal">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                </td>
                 @*<td>
                         <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
                         <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
@@ -44,6 +52,70 @@
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="createCertification" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Modal content no 1-->
+        <div class="modal-content">
+            <form asp-controller="ProfessionalsCertifications" asp-action="CreateCertification" method="post" class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">Create Certification</h4>
+                </div>
+                <div>
+                    @{ Model.ProfessionalsCertificationsViewModel = new ProfessionalPartnerships.Web.Models.AdminViewModels.ManageProfessionalsCertifications.ProfessionalsCertificationsViewModel();}
+                    @Html.EditorFor(model => model.ProfessionalsCertificationsViewModel.Note)
+                    @Html.EditorFor(model => model.ProfessionalsCertificationsViewModel.EffectiveDate)
+                    @Html.EditorFor(model => model.ProfessionalsCertificationsViewModel.ExpirationDate)
+                    @Html.DropDownListFor(
+   model => model.ProfessionalsCertificationsViewModel.CertificationTypeId,
+   Model.CertificationTypes.Select(s => new SelectListItem
+   {
+       Value = s.CertificationTypeId.ToString(),
+       Text = s.Name
+   }),
+   "Select CertificationType")
+                    @Html.DropDownListFor(
+   model => model.ProfessionalsCertificationsViewModel.ProfessionalId,
+   Model.Professionals.Select(s => new SelectListItem
+   {
+       Value = s.ProfessionalId.ToString(),
+       Text = s.FirstName + " " + s.LastName
+   }),
+   "Select Professional")
+                </div>
+                @*<div class="modal-body">
+                    <div class="input-group" id="certificationTypeSelector">
+                        <div class="form-group">
+                            <label for="sel1">Choose Professional:</label>
+                            <select class="form-control" id="sel1">
+                                @foreach (var professional in Model.Professionals)
+                                {
+                                    <option value="@professional.ProfessionalId">@professional.FirstName @professional.LastName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group" id="certificationTypeSelector">
+                        <div class="form-group">
+                            <label for="sel1">Choose CertificationType:</label>
+                            <select class="form-control" id="sel1">
+                                @foreach (var certificationType in Model.CertificationTypes)
+                                {
+                                    <option value="@certificationType.CertificationTypeId">@certificationType.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>*@
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
+    </div>
+</div>
 
 <table class="table">
     <thead>
@@ -59,19 +131,19 @@
     <tbody>
         @foreach (var item in Model.Certifications)
         {
-        <tr>
-            <td>@Html.DisplayFor(modelItem => item.CertificationId)</td>
-            <td>@Html.DisplayFor(modelItem => item.CertificationTypeId)</td>
-            <td>@Html.DisplayFor(modelItem => item.ProfessionalId)</td>
-            <td>@Html.DisplayFor(modelItem => item.EffectiveDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
-            <td>@Html.DisplayFor(modelItem => item.Note)</td>
-            @*<td>
-            <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
-            <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
-            <a asp-action="Delete" asp-route-id="@item.ProfessionalId">Delete</a>
-        </td>*@
-        </tr>
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.CertificationId)</td>
+                <td>@Html.DisplayFor(modelItem => item.CertificationTypeId)</td>
+                <td>@Html.DisplayFor(modelItem => item.ProfessionalId)</td>
+                <td>@Html.DisplayFor(modelItem => item.EffectiveDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Note)</td>
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.ProfessionalId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ProfessionalId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ProfessionalId">Delete</a>
+                    </td>*@
+            </tr>
         }
     </tbody>
 </table>

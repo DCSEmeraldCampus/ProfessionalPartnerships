@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
-
     [Route("[controller]/[action]")]
     public class AdminController : Controller
     {
