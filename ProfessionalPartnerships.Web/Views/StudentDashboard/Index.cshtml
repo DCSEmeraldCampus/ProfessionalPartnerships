@@ -32,8 +32,7 @@
                 this.setState({keyword: evt.target.value})
             },
             reset: function() {
-                this.setState({keyword:''});
-                this.fetchData();
+                this.setState({keyword:''}, this.fetchData);
             },
             render: function () {
                 var ui = this;
