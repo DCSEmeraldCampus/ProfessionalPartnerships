@@ -22,5 +22,6 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         public string Zip { get; set; }
         
         public bool IsActive { get; set; }
+        public int CompanyId { get; set; }
     }
 }
