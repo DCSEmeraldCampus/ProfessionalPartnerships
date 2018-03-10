@@ -1,0 +1,13 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.Skills>
+@{
+    ViewData["Title"] = "Skills";
+}
+<h1>Skills</h1>
+<table>
+    @foreach (var type in Model)
+    {
+        <tr><td>@type.Name</td></tr>
+
+    }
+
+</table>
