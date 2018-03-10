@@ -1,28 +1,28 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProfessionalPartnerships.Web.Models.AdminViewModels;
+using Microsoft.EntityFrameworkCore;
+using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Models.AdminViewModels.Companies;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
 	[Route("admin/[controller]/[action]")]
-	public class CompaniesController : Controller
+	public class CompaniesController : BaseController
 	{
+		public CompaniesController(PartnershipsContext db) : base(db) { }
+
 		[HttpGet]
 		public async Task<IActionResult> List()
 		{
-			return View();
+			var companies = await _db.Companies.ToListAsync();
+			return View(companies);
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> Edit(int id)
+		[HttpGet("{companyId}")]
+		public async Task<IActionResult> Edit(int companyId)
 		{
-			if (ModelState.IsValid)
-			{
-
-			}
-			// If we got this far, something failed, redisplay form
-			return View();
+			var company = await _db.Companies.FindAsync(companyId);
+			return View(company);
 		}
 
 		[HttpPost]
@@ -36,6 +36,7 @@ namespace ProfessionalPartnerships.Web.Controllers
 			// If we got this far, something failed, redisplay form
 			return View(model);
 		}
+
 
 	}
 }

@@ -1,8 +1,39 @@
-﻿@model object
+﻿@* TODO: Transition away from data object to proper view model*@
+
+@using ProfessionalPartnerships.Data.Models
+@model List<Companies>
 
 @{
-	ViewBag.Title = "title";
-	Layout = "_Layout";
+	ViewData["Title"] = "Manage Companies";
 }
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
 
-<h2>title</h2>
+<div class="table-responsive">
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th scope="col">ID #</th>
+				<th scope="col">Name</th>
+				<th scope="col">Address</th>
+				<th scope="col">Primary Contact</th>
+				<th scope="col">Active</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			@foreach (var company in Model)
+			{
+			<tr>
+				<th scope="row">@company.CompanyId</th>
+				<td>
+					@Html.ActionLink(company.Name, "Edit", "Companies", new { companyId = company.CompanyId}, null)
+				</td>
+				<td>@company.Address1</td>
+				<td>@(company.PrimaryProfessional?.FirstName ?? "")</td>
+				<td>@company.IsActive</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+</div>

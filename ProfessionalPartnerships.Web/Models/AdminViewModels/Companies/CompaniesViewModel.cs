@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProfessionalPartnerships.Web.Models.AdminViewModels
+namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
 {
     public class CompaniesViewModel
     {
+		public int CompanyId { get; set; }
+
         [Required]
         public string Name { get; set; }
         [Required]
@@ -22,5 +20,7 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         public string Zip { get; set; }
         
         public bool IsActive { get; set; }
+
+		public int? PrimaryProfessionalId { get; set; }
     }
 }
