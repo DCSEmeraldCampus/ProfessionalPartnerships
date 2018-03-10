@@ -1,0 +1,70 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Companies.CompaniesViewModel
+
+@{
+    ViewData["Title"] = $"{Model.Name}";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <h4>Company Details</h4>
+
+            <form method="post" action="@Url.Action("Save", "Companies")">
+
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(x => x.CompanyId)
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address1"></label>
+                    <input asp-for="Address1" class="form-control" />
+                    <span asp-validation-for="Address1" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address2"></label>
+                    <input asp-for="Address2" class="form-control" />
+
+                </div>
+                <div class="form-group">
+                    <label asp-for="City"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="State"></label>
+                    <input asp-for="State" class="form-control" />
+                    <span asp-validation-for="State" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Zip"></label>
+                    <input asp-for="Zip" class="form-control" />
+                    <span asp-validation-for="Zip" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="IsActive">
+                            <input asp-for="IsActive" />
+                            @Html.DisplayNameFor(m => m.IsActive)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section>
+            <h4>Associated Professionals</h4>
+        </section>
+    </div>
+</div>
