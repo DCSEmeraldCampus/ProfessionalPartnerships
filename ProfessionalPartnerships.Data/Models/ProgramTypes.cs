@@ -14,5 +14,13 @@ namespace ProfessionalPartnerships.Data.Models
         public string Name { get; set; }
 
         public ICollection<Programs> Programs { get; set; }
+
+        public bool ShowTime
+        {
+            get
+            {
+                return Name == "Live Presentation";
+            }
+        }
     }
 }

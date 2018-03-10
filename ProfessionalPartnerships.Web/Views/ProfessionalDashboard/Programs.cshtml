@@ -1,0 +1,23 @@
+﻿@model ProfessionalPartnerships.Web.Models.ProfessionalViewModels.MyProgramsViewModel
+@{
+    ViewBag.Title = "Professinal Dashboard - My Programs";
+    Layout = "_Layout";
+}
+<h2>My Programs</h2>
+
+@if(Model.Programs.Any())
+{
+    <ul>
+        @foreach(var program in Model.Programs)
+        {
+            <li>
+                <a href="#">@program.Company @program.ProgramType (@program.StartDate - @program.EndDate)</a>
+            </li>
+        }
+    </ul>
+
+} else
+{
+    <h3>You don't have any programs at this time.</h3>
+}
+
