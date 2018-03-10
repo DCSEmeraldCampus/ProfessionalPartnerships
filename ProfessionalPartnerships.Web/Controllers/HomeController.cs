@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
@@ -19,11 +20,28 @@ namespace ProfessionalPartnerships.Web.Controllers
             _db = db;
         }
 
-        
+
         public IActionResult Index()
         {
-        
             return View();
+        }
+
+        [Authorize]
+        public IActionResult Dashboard()
+        {
+            if (User.IsInRole("Administrator"))
+            {
+                return RedirectToAction("Index", "AdministratorDashboard");
+            }
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("Index", "StudentDashboard");
+            }
+            if (User.IsInRole("Professional"))
+            {
+                return RedirectToAction("Index", "ProfessionalDashboard");
+            }
+            return View("Index");
         }
 
         public IActionResult About()
