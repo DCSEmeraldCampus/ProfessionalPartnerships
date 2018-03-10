@@ -1,0 +1,106 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.ProgramsViewModel
+
+@{
+    ViewData["Title"] = "Create Program";
+}
+
+<h2>Create Program</h2>
+
+@if (!Model.ActionWasSuccessful)
+{
+<h4>Programs</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateProgram">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SelectedSemesterId" class="control-label"></label>
+
+                @Html.DropDownListFor(m => m.SelectedSemesterId,
+                Model.SemesterOptions,
+                "- Select a semester -",
+                new { @class = "form-control" })
+
+                <span asp-validation-for="SelectedSemesterId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedProgramTypeId" class="control-label"></label>
+
+                @Html.DropDownListFor(m => m.SelectedProgramTypeId,
+                Model.ProgramTypeOptions,
+                "- Select a program type -",
+                new { @class = "form-control" })
+
+                <span asp-validation-for="SelectedProgramTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailabilityDate" class="control-label"></label>
+                <input asp-for="AvailabilityDate" class="form-control" />
+                <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaximumStudentCount" class="control-label"></label>
+                <input asp-for="MaximumStudentCount" class="form-control" />
+                <span asp-validation-for="MaximumStudentCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedPointOfContactProfessionalId" class="control-label"></label>
+
+                @Html.DropDownListFor(m => m.SelectedPointOfContactProfessionalId,
+                Model.PointOfContactProfessionalOptions,
+                "- Select a point of contact -",
+                new { @class = "form-control" })
+
+                <span asp-validation-for="SelectedPointOfContactProfessionalId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea rows="5" asp-for="Description" class="form-control"> </textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsApproved" /> @Html.DisplayNameFor(model => model.IsApproved)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+}
+
+@if (Model.ActionWasSuccessful)
+{
+<div>
+    <label> Program creation was successful. </label>
+</div>
+}
+<div>
+    <a asp-action="Programs">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

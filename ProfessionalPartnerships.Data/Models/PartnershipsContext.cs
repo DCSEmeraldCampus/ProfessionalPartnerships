@@ -197,6 +197,11 @@ namespace ProfessionalPartnerships.Data.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.AspNetUserId)
+                      .IsRequired()
+                      .HasMaxLength(450)
+                      .IsUnicode(true);
+
                 entity.HasOne(d => d.Company)
                     .WithMany(p => p.Professionals)
                     .HasForeignKey(d => d.CompanyId)
@@ -224,7 +229,7 @@ namespace ProfessionalPartnerships.Data.Models
             {
                 entity.HasKey(e => e.ProgramId);
 
-                entity.Property(e => e.ProgramId).ValueGeneratedNever();
+                //entity.Property(e => e.ProgramId).ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
