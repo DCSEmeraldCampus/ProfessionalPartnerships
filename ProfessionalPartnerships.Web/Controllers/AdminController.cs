@@ -60,6 +60,13 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateProgram()
+        {
+            return View();
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
