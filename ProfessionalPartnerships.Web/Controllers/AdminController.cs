@@ -24,7 +24,9 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]        
         public async Task<IActionResult> ManageCompanies()
         {
+           
             return View();
+
         }
 
         [HttpPost]
@@ -49,6 +51,29 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewCompanies()
+        {
+            List<CompaniesViewModel> result = new List<CompaniesViewModel>();
+            var companies = _dbContext.Companies;
+            result.Add(new CompaniesViewModel { Name = "Test", Address1 = "Test1", Address2 = "Test2", City = "dublin", State = "Ohio", Zip = "23123", IsActive = true });
+            //foreach(var company in companies)
+            //{
+            //    result.Add(new CompaniesViewModel
+            //    {
+            //        Name = company.Name,
+            //        Address1 = company.Address1,
+            //        Address2 = company.Address2,
+            //        City = company.City,
+            //        State = company.State,
+            //        Zip = company.Zip,
+            //        IsActive = company.IsActive
+            //    });
+            //}
+            
+            return  View(result);
         }
 
         [HttpGet]

@@ -50,7 +50,7 @@ namespace ProfessionalPartnerships.Web
 
             var serviceProvider = services.BuildServiceProvider();
             
-            await CreateRoles(serviceProvider);
+         //   await CreateRoles(serviceProvider);
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider) {
