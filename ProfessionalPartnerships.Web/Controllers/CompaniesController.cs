@@ -23,7 +23,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> Edit(int? companyId)
         {
             var company = companyId.HasValue
-                ? await _db.Companies.FindAsync(companyId)
+                ? await _db.Companies.Include(x => x.Professionals).SingleOrDefaultAsync(x => x.CompanyId == companyId)
                 : new Companies();
 
             var viewModel = new CompaniesViewModel(company);

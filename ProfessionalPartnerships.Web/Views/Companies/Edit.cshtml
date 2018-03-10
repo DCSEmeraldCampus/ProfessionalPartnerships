@@ -65,6 +65,24 @@
     <div class="col-md-4">
         <section>
             <h4>Associated Professionals</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var professional in Model.AssociatedProfessionals)
+                    {
+                        <tr>
+                            <td>@professional.FirstName</td>
+                            <td>@professional.LastName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </section>
     </div>
 </div>
