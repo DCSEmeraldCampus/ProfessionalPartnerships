@@ -27,5 +27,16 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
             return View(programs);
         }     
+
+        public JsonResult GetPrograms(string keyword)
+        {
+            IEnumerable<Programs> programs = Database.Programs.ToList();
+
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                programs = programs.Where(x => x.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+            return Json(programs);
+        }
     }
 }

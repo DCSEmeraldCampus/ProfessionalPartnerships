@@ -1,0 +1,71 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.ManageUsersViewModel
+
+@{
+    ViewBag.Title = "Manage Users";
+    Layout = "_Layout";
+}
+<h2>@ViewBag.Title</h2>
+<div class="row" id="ManageUserFilter">
+    <div class="col-lg-3 col-md-3 col-sm-3">1</div>
+    <div class="col-lg-3 col-md-3 col-sm-3">2</div>
+    <div class="col-lg-3 col-md-3 col-sm-3">3</div>
+    <div class="col-lg-3 col-md-3 col-sm-3">
+        <div class="btn-group">
+            <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
+                <span class="glyphicon glyphicon-plus"></span> Invite User
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="invite" role="dialog">
+        <div class="modal-dialog modal-md">
+            <!-- Modal content no 1-->
+            <div class="modal-content">
+                <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title text-center">Create Invitation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2">
+                            <span class="input-group-addon" id="basic-addon2">@@gmail.com</span>
+                        </div>
+                        <div class="input-group">
+                            <label class="radio-inline"><input type="radio" id="createAdministrator" name="userType">Administrator</label>
+                            <label class="radio-inline"><input type="radio" id="createProfessional" name="userType">Professional</label>
+                            <label class="radio-inline"><input type="radio" id="createStudent" name="userType">Student</label>
+                        </div>
+                        <div class="input-group hide" id="companySelector">
+                            <div class="form-group">
+                                <label for="sel1">Choose Company:</label>
+                                <select class="form-control" id="sel1">
+                                    @foreach (var company in Model.Companies)
+                                    {
+                                        <option value="@company.CompanyId">@company.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('input[type="radio"]').click(function () {
+                if ($(this).attr('id') === 'createProfessional') {
+                    $('#companySelector').removeClass("hide");
+                }
+                else {
+                    $('#companySelector').addClass("hide");
+                }
+            });
+        });
+    </script>
+}

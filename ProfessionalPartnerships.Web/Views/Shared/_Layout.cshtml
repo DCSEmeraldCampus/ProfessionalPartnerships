@@ -58,7 +58,7 @@
                 @if (User.IsInRole("Administrator"))
                 {
                     <ul class="nav nav-sidebar">
-                        <li><a href="">Manage Users</a></li>
+                        <li><a href="/Admin/ManageUsers">Manage Users</a></li>
                         <li><a href="">Manage Companies</a></li>
                         <li><a href="">Manage Programs</a></li>
                         <li><a href="">Manage System</a></li>
@@ -82,6 +82,8 @@
         <environment include="Development">
             <script src="~/lib/jquery/dist/jquery.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/lib/react/dist/react.js"></script>
+            <script src="~/lib/react/dist/react-dom.js"></script>
             <script src="~/js/site.js" asp-append-version="true"></script>
         </environment>
         <environment exclude="Development">
@@ -97,6 +99,8 @@
                     crossorigin="anonymous"
                     integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
             </script>
+            <script src="~/lib/react/dist/react.min.js"></script>
+            <script src="~/lib/react/dist/react-dom.min.js"></script>
             <script src="~/js/site.min.js" asp-append-version="true"></script>
         </environment>
 
