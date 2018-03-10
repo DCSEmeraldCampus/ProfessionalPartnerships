@@ -22,19 +22,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         
         public IActionResult Index()
         {
-            /*
-            _db.Students.Add(new Students
-            {
-                FirstName = "Joe",
-                LastName = "Bogner"
-            });
-
-            var students = _db.Students.ToList();
-
-            _db.SaveChanges();
-
-            return View(students);
-            */
+        
             return View();
         }
 
