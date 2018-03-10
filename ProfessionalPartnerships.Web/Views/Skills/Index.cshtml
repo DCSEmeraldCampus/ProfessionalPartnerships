@@ -1,0 +1,27 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.Skills>
+@{
+    ViewData["Title"] = "Skills";
+
+}
+
+<h1>Skills</h1>
+<table>
+    @foreach (var skill in Model)
+    {
+        <tr>
+            <td>@skill.Name</td>
+            <td>
+                <a asp-area="" asp-controller="Skills" asp-action="EditSkillView" asp-route-id=@skill.SkillId>edit</a>
+            </td>
+            <td>
+                <a asp-area="" asp-controller="Skills" asp-action="DeleteSkill" asp-route-id=@skill.SkillId>delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<a asp-area="" asp-controller="Skills" asp-action="AddSkillView">Add Skill</a>
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
+
+

@@ -1,0 +1,27 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.CertificationTypes>
+@{
+    ViewData["Title"] = "Certification Types";
+
+}
+
+<h1>Certification Types</h1>
+<table>
+    @foreach (var type in Model)
+    {
+        <tr>
+            <td>@type.Name</td>
+            <td>
+                <a asp-area="" asp-controller="CertificationTypes" asp-action="EditCertificationTypeView" asp-route-id=@type.CertificationTypeId>edit</a>
+            </td>
+            <td>
+                <a asp-area="" asp-controller="CertificationTypes" asp-action="DeleteCertificationType" asp-route-id=@type.CertificationTypeId>delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<a asp-area="" asp-controller="CertificationTypes" asp-action="AddCertificationTypeView">Add Type</a>
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
+
+

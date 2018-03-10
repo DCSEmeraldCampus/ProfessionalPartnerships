@@ -1,0 +1,16 @@
+﻿@model ProfessionalPartnerships.Data.Models.Skills
+@{
+    ViewData["Title"] = "Edit Skill";
+}
+
+<h2>Edit Skill</h2>
+@using (Html.BeginForm("EditSkill", "Skills", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.SkillId)
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Edit" />
+
+}
+

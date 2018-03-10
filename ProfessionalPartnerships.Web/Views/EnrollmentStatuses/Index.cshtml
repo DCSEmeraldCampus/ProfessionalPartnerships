@@ -1,0 +1,27 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.EnrollmentStatuses>
+@{
+    ViewData["Title"] = "Enrollment Statuses";
+
+}
+
+<h1>Enrollment Statuses</h1>
+<table>
+    @foreach (var status in Model)
+    {
+        <tr>
+            <td>@status.Name</td>
+            <td>
+                <a asp-area="" asp-controller="EnrollmentStatuses" asp-action="EditEnrollmentStatusView" asp-route-id=@status.EnrollmentStatusId>edit</a>
+            </td>
+            <td>
+                <a asp-area="" asp-controller="EnrollmentStatuses" asp-action="DeleteEnrollmentStatus" asp-route-id=@status.EnrollmentStatusId>delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<a asp-area="" asp-controller="EnrollmentStatuses" asp-action="AddEnrollmentStatusView">Add Status</a>
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
+
+

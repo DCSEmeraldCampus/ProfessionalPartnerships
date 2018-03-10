@@ -1,0 +1,15 @@
+﻿@model ProfessionalPartnerships.Data.Models.Semesters
+@{
+    ViewData["Title"] = "Add Semester";
+}
+
+<h2>Add Semester</h2>
+@using (Html.BeginForm("AddSemester", "Semesters", FormMethod.Post))
+{
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Add" />
+
+}
+

@@ -4,7 +4,7 @@
 }
 
 <h2>Add Certification Type</h2>
-@using (Html.BeginForm("AddCertificationType", "ManageSystem", FormMethod.Post))
+@using (Html.BeginForm("AddCertificationType", "CertificationTypes", FormMethod.Post))
 {
     @Html.LabelFor(model => model.Name)
     @Html.TextBoxFor(model => model.Name)

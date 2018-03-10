@@ -21,18 +21,6 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View();
         }
 
-        public IActionResult CertificationTypes()
-        {
-            var certTypes = _db.CertificationTypes.ToList();
-            return View(certTypes);
-        }
-
-        public IActionResult EnrollmentStatuses()
-        {
-            var statuses = _db.EnrollmentStatuses.ToList();
-            return View(statuses);
-        }
-
         public IActionResult Interests()
         {
             var interests = _db.Interests.ToList();
@@ -57,16 +45,6 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(skills);
         }
 
-        public IActionResult AddCertificationTypeView()
-        {
-            return View();
-        }
 
-        public IActionResult AddCertificationType(CertificationTypes type)
-        {
-            _db.CertificationTypes.Add(type);
-            _db.SaveChanges();
-            return RedirectToAction("CertificationTypes");
-        }
     }
 }
