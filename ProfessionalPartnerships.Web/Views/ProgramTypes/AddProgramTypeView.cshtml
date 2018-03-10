@@ -1,0 +1,15 @@
+﻿@model ProfessionalPartnerships.Data.Models.ProgramTypes
+@{
+    ViewData["Title"] = "Add Program Type";
+}
+
+<h2>Add Program Type</h2>
+@using (Html.BeginForm("AddProgramType", "ProgramTypes", FormMethod.Post))
+{
+    @Html.LabelFor(model => model.Name)
+    @Html.TextBoxFor(model => model.Name)
+
+    <input type="submit" value="Add" />
+
+}
+

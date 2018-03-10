@@ -1,0 +1,27 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.Interests>
+@{
+    ViewData["Title"] = "Interests";
+
+}
+
+<h1>Interests</h1>
+<table>
+    @foreach (var interest in Model)
+    {
+        <tr>
+            <td>@interest.Name</td>
+            <td>
+                <a asp-area="" asp-controller="Interests" asp-action="EditInterestView" asp-route-id=@interest.InterestId>edit</a>
+            </td>
+            <td>
+                <a asp-area="" asp-controller="Interests" asp-action="DeleteInterest" asp-route-id=@interest.InterestId>delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<a asp-area="" asp-controller="Interests" asp-action="AddInterestView">Add Interest</a>
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
+
+

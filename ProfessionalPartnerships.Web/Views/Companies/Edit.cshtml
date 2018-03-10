@@ -1,15 +1,21 @@
-﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.CompaniesViewModel;
-@{
-    ViewData["Title"] = "Manage Companies";
-}
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Companies.CompaniesViewModel
 
+@{
+    ViewData["Title"] = $"{Model.Name}";
+}
+
+<h2>@ViewData["Title"]</h2>
 
 <div class="row">
     <div class="col-md-4">
         <section>
-            <form method="post">
+            <h4>Company Details</h4>
+
+            <form method="post" action="@Url.Action("Save", "Companies")">
+
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(x => x.CompanyId)
 
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
@@ -51,9 +57,14 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-default">Save</button>
+                    <button type="submit" class="btn btn-success">Save</button>
                 </div>
             </form>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section>
+            <h4>Associated Professionals</h4>
         </section>
     </div>
 </div>

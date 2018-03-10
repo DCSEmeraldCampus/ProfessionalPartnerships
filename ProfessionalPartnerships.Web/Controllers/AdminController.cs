@@ -21,36 +21,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             _dbContext = db;
         }
 
-        [HttpGet]        
-        public async Task<IActionResult> ManageCompanies()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ManageCompanies(CompaniesViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                _dbContext.Add(new Companies
-                {
-                    Name = model.Name,
-                    Address1 = model.Address1,
-                    Address2 = model.Address2,
-                    City = model.City,
-                    State = model.State,
-                    Zip = model.Zip,
-                    IsActive = model.IsActive
-                });
-                _dbContext.SaveChanges();
-                return View(model);
-            }
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
+        
         [HttpGet]
         public async Task<IActionResult> ManagePrograms()
         {

@@ -1,0 +1,27 @@
+﻿@model List<ProfessionalPartnerships.Data.Models.ProgramTypes>
+@{
+    ViewData["Title"] = "Program Types";
+
+}
+
+<h1>Program Types</h1>
+<table>
+    @foreach (var type in Model)
+    {
+        <tr>
+            <td>@type.Name</td>
+            <td>
+                <a asp-area="" asp-controller="ProgramTypes" asp-action="EditProgramTypeView" asp-route-id=@type.ProgramTypeId>edit</a>
+            </td>
+            <td>
+                <a asp-area="" asp-controller="ProgramTypes" asp-action="DeleteProgramType" asp-route-id=@type.ProgramTypeId>delete</a>
+            </td>
+        </tr>
+
+    }
+</table>
+
+<a asp-area="" asp-controller="ProgramTypes" asp-action="AddProgramTypeView">Add Status</a>
+<a asp-area="" asp-controller="ManageSystem" asp-action="Index">Return</a>
+
+
