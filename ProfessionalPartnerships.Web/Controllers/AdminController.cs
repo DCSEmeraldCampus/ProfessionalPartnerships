@@ -33,5 +33,26 @@ namespace ProfessionalPartnerships.Web.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ManagePrograms()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManagePrograms(ProgramsViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
     }
 }
