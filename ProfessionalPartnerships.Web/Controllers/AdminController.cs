@@ -16,7 +16,6 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]        
         public async Task<IActionResult> ManageCompanies()
         {
-                                    
             return View();
         }
 
@@ -29,7 +28,6 @@ namespace ProfessionalPartnerships.Web.Controllers
             {
               
             }
-
             // If we got this far, something failed, redisplay form
             return View(model);
         }
