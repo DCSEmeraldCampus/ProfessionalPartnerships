@@ -5,6 +5,7 @@ namespace ProfessionalPartnerships.Data.Models
 {
     public partial class Certifications
     {
+
         public int CertificationId { get; set; }
         public int CertificationTypeId { get; set; }
         public int ProfessionalId { get; set; }
