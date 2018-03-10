@@ -1,10 +1,12 @@
 ﻿@model ProfessionalPartnerships.Web.AdministratorDashboardViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Admin DashBoard";
     Layout = "_Layout";
 }
 
-<h2>title</h2>
+<h2>@ViewBag.Title</h2>
 
 <input type="button" value="ManagePrograms" onclick="location.href='@Url.Action("Programs", "Admin")'" />
+<input type="button" value="ManageCompanies" onclick="location.href='@Url.Action("List", "Companies")'"/>
+<input type="button" value="ManageUsers" onclick="location.href='@Url.Action("SearchUsers", "Admin")'" />
