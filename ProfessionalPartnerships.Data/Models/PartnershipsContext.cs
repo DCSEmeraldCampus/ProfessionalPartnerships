@@ -229,7 +229,7 @@ namespace ProfessionalPartnerships.Data.Models
             {
                 entity.HasKey(e => e.ProgramId);
 
-                //entity.Property(e => e.ProgramId).ValueGeneratedNever();
+                entity.Property(e => e.ProgramId).ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .IsRequired()
@@ -337,11 +337,6 @@ namespace ProfessionalPartnerships.Data.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
-
-                entity.Property(e => e.AspNetUserId)
-                   .HasMaxLength(450)
-                   .IsUnicode(true);
-
             });
         }
     }

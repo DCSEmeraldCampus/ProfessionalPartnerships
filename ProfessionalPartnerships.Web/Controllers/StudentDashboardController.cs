@@ -36,14 +36,12 @@ namespace ProfessionalPartnerships.Web.Controllers
             return result.Result;
         }
 
-        public JsonResult GetPrograms(string keyword)
+        //can probably move to a helper or something
+        private int GetCurrentStudentId()
         {
-
             string userId = null;
-
-            var myEnrollments = new Dictionary<int, string>();
-
-            if (HttpContext.User.Identity != null && !String.IsNullOrEmpty(HttpContext.User.Identity.Name)) {
+            if (HttpContext.User.Identity != null && !String.IsNullOrEmpty(HttpContext.User.Identity.Name))
+            {
                 var user = GetCurrentUser();
                 if (user != null)
                 {
@@ -53,17 +51,31 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             //for testing
             userId = "8a94b129-c319-4f8c-8cfe-9f07e8a44ae1";
-            if (userId != null) {
+            if (userId != null)
+            {
                 var myStudent = Database.Students.Where(x => x.AspNetUserId == userId).FirstOrDefault();
                 if (myStudent != null)
                 {
-                    foreach(var enrollment in Database.Enrollments.Include(e => e.EnrollmentStatus).Where(x => x.StudentId == myStudent.StudentId))
-                    {
-                        myEnrollments[enrollment.ProgramId] = enrollment.EnrollmentStatus.Name;
-                    }
+                    return myStudent.StudentId;
                 }
             }
-                       
+            return 0;
+        }
+
+        //probably should move to a service or repository
+        private IEnumerable<StudentDashboardViewModel> FindPrograms(string keyword)
+        {
+            int studentId = GetCurrentStudentId();
+
+            var myEnrollments = new Dictionary<int, string>();
+
+            if (studentId != 0)
+            {
+                foreach (var enrollment in Database.Enrollments.Include(e => e.EnrollmentStatus).Where(x => x.StudentId == studentId))
+                {
+                    myEnrollments[enrollment.ProgramId] = enrollment.EnrollmentStatus.Name;
+                }
+            }
 
             var enrollmentTotals = Database.Enrollments.GroupBy(x => x.ProgramId).Select(g => new
             {
@@ -71,12 +83,12 @@ namespace ProfessionalPartnerships.Web.Controllers
                 EnrolledCount = g.Count(x => x.EnrollmentStatus.IsDisregardedInEnrollmentCount == false)
             });
 
-
             var rows = Database.Programs.Include(p => p.ProgramType).GroupJoin(enrollmentTotals,
                     p => p.ProgramId,
                     e => e.ProgramId, (p, e) => new { Program = p, Enrollments = e }).SelectMany(
                     e => e.Enrollments.Select(x => x.EnrolledCount).DefaultIfEmpty(),
-                (p, ct) => new {
+                (p, ct) => new StudentDashboardViewModel
+                {
                     description = p.Program.Description,
                     maximumStudentCount = p.Program.MaximumStudentCount,
                     programTypeName = p.Program.ProgramType.Name,
@@ -84,7 +96,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                     enrolledCount = ct,
                     enrollmentStatus = myEnrollments.ContainsKey(p.Program.ProgramId) ? myEnrollments[p.Program.ProgramId] : ""
                 });
-            
+
             /*
             //seems to execute once per program
             var rows = Database.Programs.Include(p => p.ProgramType).Select(p=> new
@@ -100,7 +112,39 @@ namespace ProfessionalPartnerships.Web.Controllers
             {
                 rows = rows.Where(x => x.description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
             }
-            return Json(rows);
+
+            return rows;
+        }
+
+        [HttpPost]
+        public JsonResult GetPrograms(string keyword)
+        {
+            return Json(FindPrograms(keyword));
+        }
+
+        [HttpPost]
+        public JsonResult ApplyProgram(int programId)
+        {
+            int studentId = GetCurrentStudentId();
+            if (studentId == 0) return Json(new { error = "Not Logged In" });
+
+            var existing = Database.Enrollments.Where(x => x.StudentId == studentId && x.ProgramId == programId).FirstOrDefault();
+            if (existing != null) {
+                return Json(new { error = "Already applied" });
+            }
+
+            Database.Enrollments.Add(new Enrollments
+            {
+                ProgramId = programId,
+                StudentId = studentId,
+                EnrollmentStatusId = 1,
+            });
+
+            Database.SaveChanges();
+
+            var result = FindPrograms(null).Where(x => x.programId == programId).FirstOrDefault();
+
+            return Json(result);
         }
     }
 }
