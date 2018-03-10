@@ -27,7 +27,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             if (User.Identity.IsAuthenticated == true)
             {
-                ViewBag["UserName"] = User.Identity.Name;
+                ViewBag.UserName = User.Identity.Name;
             }
         }
     }
