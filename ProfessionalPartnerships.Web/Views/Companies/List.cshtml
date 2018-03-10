@@ -6,8 +6,16 @@
 @{
 	ViewData["Title"] = "Manage Companies";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
+
+<div class="clearfix">
+	<div>
+		<h2>@ViewData["Title"]</h2>
+	</div>
+
+	<div class="form-group" style="float: right;">
+		@Html.ActionLink("Add New", "Edit", "Companies", null, new {@class = "btn btn-success"})
+	</div>
+</div>
 
 <div class="table-responsive">
 	<table class="table table-hover">
