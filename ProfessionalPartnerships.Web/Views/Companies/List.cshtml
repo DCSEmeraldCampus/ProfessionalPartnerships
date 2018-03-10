@@ -35,7 +35,7 @@
                         @Html.ActionLink(company.Name, "Edit", "Companies", new { companyId = company.CompanyId }, null)
                     </td>
                     <td>@company.Address1</td>
-                    <td>TBD</td>
+                    <td>@company.PrimaryProfessionalName</td>
                     <td>@company.IsActive</td>
                 </tr>
             }

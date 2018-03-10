@@ -33,7 +33,9 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
         public bool IsActive { get; set; }
 
         [DisplayName("Primary Professional")]
-        public int? PrimaryProfessionalId { get; set; }
+        public string PrimaryProfessionalId { get; set; }
+
+        public string PrimaryProfessionalName { get; set; }
 
         public List<ProfessionalsViewModel> AssociatedProfessionals { get; set; }
 
@@ -52,7 +54,12 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
             this.State = company.State;
             this.Zip = company.Zip;
             this.IsActive = company.IsActive;
-            this.PrimaryProfessionalId = company.PrimaryProfessionalId;
+            this.PrimaryProfessionalId = company.PrimaryProfessionalId.ToString();
+            if(company.PrimaryProfessionalId != null)
+            {
+                var professional = company.Professionals.Single(x => x.ProfessionalId == company.PrimaryProfessionalId);
+                this.PrimaryProfessionalName = professional.FirstName + " " + professional.LastName;
+            }
             this.AssociatedProfessionals = company.Professionals.Select(x => new ProfessionalsViewModel(x)).ToList();
         }
 
@@ -65,7 +72,14 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels.Companies
             company.State = this.State;
             company.Zip = this.Zip;
             company.IsActive = this.IsActive;
-            company.PrimaryProfessionalId = this.PrimaryProfessionalId;
+            if (string.IsNullOrEmpty(this.PrimaryProfessionalId))
+            {
+                company.PrimaryProfessionalId = null;
+            }
+            else
+            {
+                company.PrimaryProfessionalId = int.Parse(this.PrimaryProfessionalId);
+            }
         }
     }
 }
