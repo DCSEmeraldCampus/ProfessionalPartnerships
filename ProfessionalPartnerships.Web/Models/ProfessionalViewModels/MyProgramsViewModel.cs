@@ -14,6 +14,7 @@ namespace ProfessionalPartnerships.Web.Models.ProfessionalViewModels
             public string ProgramType { get; set; }
             public string StartDate { get; set; }
             public string EndDate { get; set; }
+            public int Id { get; set; }
         }
     }
 }
