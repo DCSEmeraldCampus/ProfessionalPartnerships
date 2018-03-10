@@ -10,8 +10,6 @@
 @section Scripts {
     <script>
         var App = React.createClass({
-            cols: [{display:'Description', col:'description'},
-                    {display:'Max Student Count', col: 'maximumStudentCount'}],
             fetchData: function(keyword) {
                 var ui = this;
                 var params = {}
@@ -19,10 +17,20 @@
                     params.keyword = ui.state.keyword;
                 }
                 $.get('/StudentDashboard/GetPrograms',params).success(function(rows) {
+                    //TODO remove
+                    window.rows = rows;
                     ui.setState({rows:rows});
                 });
             },
             getInitialState: function() {
+
+                this.cols = [
+                    {display:'Type', col:'programTypeName'},
+                    {display:'Description', col:'description'},
+                    {display:'Max Student Count', col: 'maximumStudentCount'},
+                    {display:'Enrolled Count', col:'enrolledCount'},
+                    {display:'Action', render: this.renderActionCol}];
+
                 return { rows: [] };
             },
             componentDidMount: function() {
@@ -34,11 +42,27 @@
             reset: function() {
                 this.setState({keyword:''}, this.fetchData);
             },
+            applyProgram: function(row) {
+                console.log(ui.state);
+            },
+            renderActionCol: function(row, rowIdx, colIdx) {
+                var ui = this;
+                var applyButton = R("button", { className: "btn btn-primary", onClick: ui.applyProgram.bind(ui, row)}, "Apply")
+                var actionElement = applyButton;
+                if (row.enrollmentStatus) {
+                    actionElement = R("span", row.enrollmentStatus);
+                } else if (row.enrolledCount >= row.maximumStudentCount) {
+                    actionElement = R("span",  "Filled")
+                }
+                return R("td",{key: 'col' + rowIdx }, actionElement);
+            },
             render: function () {
                 var ui = this;
                 var makeRows = function() {
-                    return ui.state.rows.map(function(row,i) {
-                        return R("tr",{key:i}, ui.cols.map(function(col, i) { return R("td", {key: i}, row[col.col]) }));
+                    return ui.state.rows.map(function(row,rowIdx) {
+                        return R("tr",{key:rowIdx}, ui.cols.map(function(col, colIdx) {
+                            return col.render != undefined ? col.render(row, rowIdx, colIdx) : R("td", {key: colIdx}, row[col.col]);
+                        }));
                     })
                 }
                 var makeTable = function() {

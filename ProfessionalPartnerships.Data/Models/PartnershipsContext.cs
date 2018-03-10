@@ -332,6 +332,11 @@ namespace ProfessionalPartnerships.Data.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.AspNetUserId)
+                   .HasMaxLength(450)
+                   .IsUnicode(true);
+
             });
         }
     }
