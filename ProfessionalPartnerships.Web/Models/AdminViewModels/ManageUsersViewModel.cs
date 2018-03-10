@@ -6,6 +6,6 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
 {
     public class ManageUsersViewModel
     {
-        public List<Companies> Companies { get; set; }
+        public List<ProfessionalPartnerships.Data.Models.Companies> Companies { get; set; }
     }
 }
