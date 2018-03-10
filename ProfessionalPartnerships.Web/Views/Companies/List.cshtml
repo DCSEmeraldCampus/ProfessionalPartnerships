@@ -1,7 +1,4 @@
-﻿@* TODO: Transition away from data object to proper view model*@
-
-@using ProfessionalPartnerships.Data.Models
-@model List<Companies>
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Companies.CompaniesListViewModel
 
 @{
 	ViewData["Title"] = "Manage Companies";
@@ -38,7 +35,7 @@
 					@Html.ActionLink(company.Name, "Edit", "Companies", new { companyId = company.CompanyId}, null)
 				</td>
 				<td>@company.Address1</td>
-				<td>@(company.PrimaryProfessional?.FirstName ?? "")</td>
+				<td>TBD</td>
 				<td>@company.IsActive</td>
 			</tr>
 			}

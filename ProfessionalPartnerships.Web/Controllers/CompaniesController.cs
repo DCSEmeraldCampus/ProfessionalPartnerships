@@ -15,29 +15,35 @@ namespace ProfessionalPartnerships.Web.Controllers
 		public async Task<IActionResult> List()
 		{
 			var companies = await _db.Companies.ToListAsync();
-			return View(companies);
+			var viewModel = new CompaniesListViewModel(companies);
+			return View(viewModel);
 		}
 
 		[HttpGet("{companyId?}")]
-		public async Task<IActionResult> Edit(int companyId)
+		public async Task<IActionResult> Edit(int? companyId)
 		{
-			var company = await _db.Companies.FindAsync(companyId) ?? new Companies();
-			return View(company);
+			var company = companyId.HasValue 
+				? await _db.Companies.FindAsync(companyId) 
+				: new Companies();
+
+			var viewModel = new CompaniesViewModel(company);
+			return View(viewModel);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Save([FromForm]Companies model)
+		public async Task<IActionResult> Save(CompaniesViewModel model)
 		{
 			if (!ModelState.IsValid)
 			{
 				return View("Edit", model);
 			}
 
-			//TODO: placeholder until switch to proper viewmodel
 			if (model.CompanyId != default(int))
 			{
-				//pre-existing company, query and update
+				var company = await _db.Companies.FindAsync(model.CompanyId);
+
+				model.ApplyTo(company);
 			}
 			else
 			{
@@ -51,12 +57,11 @@ namespace ProfessionalPartnerships.Web.Controllers
 					Zip = model.Zip,
 					IsActive = model.IsActive
 				});
-				await _db.SaveChangesAsync();
 			}
+
+			await _db.SaveChangesAsync();
 
 			return RedirectToAction("List");
 		}
-
-
 	}
 }
