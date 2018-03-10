@@ -43,11 +43,11 @@
                     })
                 }
                 var makeTable = function() {
-                    return R("table", { className: "table" }, [
+                    return React.createElement("table", { className: "table" },
                         Rs("thead",
-                            R("tr", ui.cols.map(function (col, i) { return R("td", {key: i}, col.display) }))),
+                        R("tr", ui.cols.map(function (col, i) { return R("td", {key: i}, col.display) }))),
                         R("tbody",makeRows())
-                    ]);
+                    );
                 }
                 var makeFilters = function() {
                     return Rs("div",

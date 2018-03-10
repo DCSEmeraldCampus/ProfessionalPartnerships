@@ -32,5 +32,5 @@ var R = function (node, propsOrChildren, children) {
     return React.createElement.apply(null, args);
 }
 var Rs = function (el) {
-    return React.createElement.apply(null, ["div", {}].concat(Array.prototype.slice.call(arguments, 1)))
+    return React.createElement.apply(null, [el, {}].concat(Array.prototype.slice.call(arguments, 1)))
 }
