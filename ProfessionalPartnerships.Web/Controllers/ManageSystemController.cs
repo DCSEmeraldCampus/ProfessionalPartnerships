@@ -45,6 +45,10 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(skills);
         }
 
-
+        public IActionResult ConfigurationValues()
+        {
+            var configValues = _db.ConfigurationValues.ToList();
+            return View(configValues);
+        }
     }
 }

@@ -31,14 +31,14 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Professional Partnerships</a>
+                    <a class="navbar-brand" href="/">Professional Partnerships</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Dashboard</a></li>
+                        <li><a href="/Home/Dashboard">Dashboard</a></li>
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            <li><a href="#">Hello @UserManager.GetUserName(User)!</a> </li>
+                            <li><a href="/Manage/Index">Hello @UserManager.GetUserName(User)!</a> </li>
                             <li><button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button></li>
                         }
                     </ul>
@@ -61,7 +61,7 @@
                         <li><a href="/Admin/ManageUsers">Manage Users</a></li>
                         <li><a href="/Admin/Companies/List">Manage Companies</a></li>
                         <li><a href="/Admin/Programs">Manage Programs</a></li>
-                        <li><a href="">Manage System</a></li>
+                        <li><a href="/ManageSystem/">Manage System</a></li>
                         <li><a href="">Manage Reviews</a></li>
                         <li><a href="">Manage Connections</a></li>
                     </ul>

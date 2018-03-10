@@ -198,6 +198,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             {
                 ViewData["Message"] = "No Users found for Selected Role";
             }
+
             model.roles = new List<SelectListItem>();
             model.roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
             model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });

@@ -9,6 +9,7 @@ namespace ProfessionalPartnerships.Data.Models
         public virtual DbSet<Certifications> Certifications { get; set; }
         public virtual DbSet<CertificationTypes> CertificationTypes { get; set; }
         public virtual DbSet<Companies> Companies { get; set; }
+        public virtual DbSet<ConfigurationValues> ConfigurationValues { get; set; }
         public virtual DbSet<Enrollments> Enrollments { get; set; }
         public virtual DbSet<EnrollmentStatuses> EnrollmentStatuses { get; set; }
         public virtual DbSet<Interests> Interests { get; set; }
@@ -102,6 +103,20 @@ namespace ProfessionalPartnerships.Data.Models
                     .WithMany(p => p.Companies)
                     .HasForeignKey(d => d.PrimaryProfessionalId)
                     .HasConstraintName("FK_Companies_Companies");
+            });
+
+            modelBuilder.Entity<ConfigurationValues>(entity =>
+            {
+                entity.HasKey(e => e.ConfigurationValueId);
+
+                entity.Property(e => e.Key)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Enrollments>(entity =>
