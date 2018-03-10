@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using ProfessionalPartnerships.Models.ProfessionalDashboard;
 using Microsoft.EntityFrameworkCore;
+using ProfessionalPartnerships.Web.Models.ProfessionalViewModels;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
@@ -24,12 +25,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [Authorize(Roles = "Professional")]
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-
-            var professional = _db.Professionals
-                                  .Include(p => p.Company)
-                                  .Where(p => p.AspNetUserId == user.Id)
-                                  .SingleOrDefault();
+            var professional = await GetCurrentProfessinal();
 
             var model = new ProfessionalDashboardViewModel();
 
@@ -39,6 +35,45 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
 
             return View(model);
+        }
+
+        public async Task<IActionResult> Programs()
+        {
+            var professional = await GetCurrentProfessinal();
+            var compnay = professional.Company;
+
+            var programs = _db.Programs.Where(p => p.PointOfContactProfessionalId == professional.ProfessionalId).Include(p => p.ProgramType);
+
+            var model = new MyProgramsViewModel();
+
+            foreach(var program in programs)
+            {
+                model.Programs.Add(new MyProgramsViewModel.ProgramSummaryViewModel
+                {
+                    Company = compnay.Name,
+                    ProgramType = program.ProgramType.Name,
+                    StartDate = program.ProgramType.ShowTime 
+                        ? $"{program.StartDate.ToShortDateString()} {program.StartDate.ToShortTimeString()}"
+                        : program.StartDate.ToShortDateString(),
+                    EndDate = program.ProgramType.ShowTime
+                         ? $"{program.EndDate.ToShortDateString()} {program.EndDate.ToShortTimeString()}"
+                         : program.EndDate.ToShortDateString(),
+                });
+            }
+
+            return View(model);
+        }
+
+        private async Task<Professionals> GetCurrentProfessinal()
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            var professional = _db.Professionals
+                                  .Include(p => p.Company)
+                                  .Where(p => p.AspNetUserId == user.Id)
+                                  .SingleOrDefault();
+
+            return professional;
         }
     }
 }
