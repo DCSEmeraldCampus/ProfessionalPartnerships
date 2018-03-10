@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ProfessionalPartnerships.Data.Models.Programs>
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<h3>Programs</h3>
+
+<!-- if I had a javsacript framework I would do this differently -->
+<div>
+    Keyword: <input type="text" id="Keyword" />
+    <button type="button" class="btn btn-primary" id="Search">Search</button>
+    <button type="button" class="btn btn-secondary" id="Reset">Reset</button>
+</div>
+<div id="ProgramTable">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Max Student Count</th>
+            </tr>
+        </thead>
+        @foreach (var program in Model)
+    {
+        <tr>
+            <td>@program.Description</td>
+            <td>@program.MaximumStudentCount</td>
+        </tr>
+    }
+    </table>
+    
+</div>
+@section Scripts {
+    <script>
+        $(function () {
+
+            function RefreshTable(keyword) {
+                var args = {}
+                if (keyword) {
+                    args.keyword = keyword;
+                }
+                $.post('/StudentDashboard/',args).success(function (html) {
+                    $('#ProgramTable').html($(html).find('#ProgramTable'))
+                })
+            }
+            $('#Search').click(function () {
+                RefreshTable($('#Keyword').val());               
+            })
+            $('#Reset').click(function () {
+                $('#Keyword').val('');
+                RefreshTable();
+
+            })
+        })
+        
+    </script>
+    
+}
