@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
 using ProfessionalPartnerships.Web.Constants;
+using ProfessionalPartnerships.Web.Services.Interface;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 

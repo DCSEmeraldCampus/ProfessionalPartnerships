@@ -20,6 +20,5 @@ namespace ProfessionalPartnerships.Data.Models
         public ICollection<Enrollments> Enrollments { get; set; }
         public ICollection<StudentInterests> StudentInterests { get; set; }
         public ICollection<StudentReviews> StudentReviews { get; set; }
-        public string AspNetUserId { get; set; }
     }
 }
