@@ -48,7 +48,9 @@ namespace ProfessionalPartnerships.Web
                 googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             });
 
-            services.AddMvc();
+            services.AddMvc().AddSessionStateTempDataProvider();
+
+            services.AddSession(); ;
 
             var serviceProvider = services.BuildServiceProvider();
             
@@ -92,7 +94,7 @@ namespace ProfessionalPartnerships.Web
 
             
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseAuthentication();
 
             app.UseMvc(routes =>

@@ -21,6 +21,7 @@ namespace ProfessionalPartnerships.Data.Models
         public string Phone { get; set; }
         public int? CompanyId { get; set; }
         public bool IsActive { get; set; }
+        public string AspNetUserId { get; set; }
 
         public Companies Company { get; set; }
         public ICollection<Certifications> Certifications { get; set; }

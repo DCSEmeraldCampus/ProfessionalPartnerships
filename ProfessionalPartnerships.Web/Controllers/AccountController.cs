@@ -5,9 +5,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ProfessionalPartnerships.Web.Models;
@@ -46,12 +48,14 @@ namespace ProfessionalPartnerships.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null, Guid invitationCode = new Guid())
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
+
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData.Model = new LoginViewModel { InvitationCode = invitationCode };
             return View();
         }
 
@@ -267,17 +271,27 @@ namespace ProfessionalPartnerships.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+        public async Task<IActionResult> ExternalLoginCallback(Guid id, string returnUrl = null, string remoteError = null)
         {
             if (remoteError != null)
             {
                 ErrorMessage = $"Error from external provider: {remoteError}";
                 return RedirectToAction(nameof(Login));
             }
+
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction(nameof(Login));
+                return RedirectToAction(nameof(Login), new LoginViewModel { InvitationCode = id });
+            }
+
+            if (id == Guid.Empty)
+            {
+                id = Guid.Parse(HttpContext.Session.GetString("InvitationCode"));
+            }
+            else
+            {
+                HttpContext.Session.SetString("InvitationCode", id.ToString());
             }
 
             // Sign in the user with this external login provider if the user already has a login.
@@ -297,7 +311,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLogin", new ExternalLoginViewModel { Email = email });
+                return View("ExternalLogin", new ExternalLoginViewModel { Email = email, InvitationCode = id});
             }
         }
 
@@ -308,6 +322,9 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Get the invitation
+                var invitation = _invitationService.GetInvitation(model.InvitationCode);
+
                 // Get the information about the user from the external login provider
                 var info = await _signInManager.GetExternalLoginInfoAsync();
                 if (info == null)
@@ -321,6 +338,8 @@ namespace ProfessionalPartnerships.Web.Controllers
                     result = await _userManager.AddLoginAsync(user, info);
                     if (result.Succeeded)
                     {
+                        await _userManager.AddToRoleAsync(user, invitation.Role);
+                        _invitationService.ProcessInvitation(model.InvitationCode, model.FirstName, model.LastName, user.Id, user.Email);
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
                         return RedirectToLocal(returnUrl);
@@ -469,7 +488,17 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
             _invitationService.CreateInvitation(emailAddress, role, companyId, baseUrl);
-            return RedirectToAction("ManageUsers","Admin");
+            return RedirectToAction("ManageUsers", "Admin");
+        }
+
+        [Route("/Account/AcceptInvitation/{id}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AcceptInvitation(Guid id)
+        {
+            //_invitationService.ProcessInvitation(id);
+            HttpContext.Session.SetString("InvitationCode", id.ToString());
+            return RedirectToAction("ExternalLoginCallback", new { id = id });
         }
     }
 }
