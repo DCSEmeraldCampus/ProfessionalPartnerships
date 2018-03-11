@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ProfessionalPartnerships.Web.Models;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ProfessionalPartnerships.Web.Controllers
 {
     public class StudentDashboardController : BaseController
@@ -102,17 +100,6 @@ namespace ProfessionalPartnerships.Web.Controllers
                     semesterName = p.Program.Semester.Name
                 });
 
-            /*
-            //seems to execute once per program
-            var rows = Database.Programs.Include(p => p.ProgramType).Select(p=> new
-                {
-                    description = p.Description,
-                    maximumStudentCount = p.MaximumStudentCount,
-                    programTypeName = p.ProgramType.Name,
-                    enrolledCount = enrollmentTotals.Where(x=>x.ProgramId == p.ProgramId).Select(x=>x.EnrolledCount).FirstOrDefault()
-                });
-            */
-
             
             return rows;
         }
@@ -124,7 +111,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpPost]
-        public JsonResult ApplyProgram(int programId)
+        public JsonResult ApplyProgram(int programId, string note)
         {
             int studentId = GetCurrentStudentId();
             if (studentId == 0) return Json(new { error = "Not Logged In" });
@@ -139,6 +126,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 ProgramId = programId,
                 StudentId = studentId,
                 EnrollmentStatusId = 1,
+                Note = note
             });
 
             Database.SaveChanges();
