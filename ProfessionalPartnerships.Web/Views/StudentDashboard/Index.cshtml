@@ -14,6 +14,29 @@
 
 <div id="react-root"></div>
 
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Apply to Program</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label id="ProgramName"></label>
+                <br><br>
+                You may optionally enter a comment below for the administrator.
+                <textarea id="Notes" style="width:500px;height:50px"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="Apply" data-dismiss="modal">Apply</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         var App = React.createClass({
@@ -41,25 +64,26 @@
             componentDidMount: function() {
                 this.fetchData();
             },
-            setKeyword: function(evt) {
-                this.setState({keyword: evt.target.value})
-            },
             reset: function() {
                 this.setState({keyword:''}, this.fetchData);
             },
             applyProgram: function(row) {
                 var ui = this;
-                var params = { programId : row.programId };
-                $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
-                    if (result.error) {
-                        alert(result.error);
-                        return;
-                    }
-                    Object.keys(result).forEach(function(key) {
-                        row[key] = result[key];
-                    })
-                    ui.setState({rows:ui.state.rows});
-                    console.log(result);
+                $('.modal').modal()
+                $('#ProgramName').text(row['description']);
+                $('#Apply').one("click", function() {
+                    var params = { programId : row.programId, note: $('#Notes').val() };
+                    $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
+                        if (result.error) {
+                            alert(result.error);
+                            return;
+                        }
+                        Object.keys(result).forEach(function(key) {
+                            row[key] = result[key];
+                        })
+                        ui.setState({rows:ui.state.rows});
+                        $('#Notes').val('');
+                    });
                 });
             },
             renderActionCol: function(row, rowIdx, colIdx) {
@@ -72,14 +96,6 @@
                     actionElement = R("span",  "Filled")
                 }
                 return R("td",{key: 'col' + rowIdx }, actionElement);
-            },
-            change: function(prop) {
-                var ui = this;
-                return function(evt) {
-                    var newState = {}
-                    newState[prop] = evt.target.value
-                    ui.setState(newState)
-                }
             },
             applyFilter: function(uiCol) {
                 var ui = this;
