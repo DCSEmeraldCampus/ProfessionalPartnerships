@@ -14,7 +14,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var companies = await _db.Companies.ToListAsync();
+            var companies = await _db.Companies.Include(x => x.Professionals).ToListAsync();
             var viewModel = new CompaniesListViewModel(companies);
             return View(viewModel);
         }
