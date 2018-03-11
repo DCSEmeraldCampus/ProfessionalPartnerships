@@ -14,7 +14,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var companies = await _db.Companies.ToListAsync();
+            var companies = await _db.Companies.Include(x => x.Professionals).ToListAsync();
             var viewModel = new CompaniesListViewModel(companies);
             return View(viewModel);
         }
@@ -23,7 +23,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> Edit(int? companyId)
         {
             var company = companyId.HasValue
-                ? await _db.Companies.FindAsync(companyId)
+                ? await _db.Companies.Include(x => x.Professionals).SingleOrDefaultAsync(x => x.CompanyId == companyId)
                 : new Companies();
 
             var viewModel = new CompaniesViewModel(company);
