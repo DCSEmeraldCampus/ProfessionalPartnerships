@@ -24,11 +24,16 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
     }
     public class UsersViewModel
     {
+        [Required]
         public int UserID { get; set; }
         public string UserName { get; set; }
+        [Required]
         public string Email { get; set; }
         public bool IsActive { get; set; }
         public string RoleName { get; set; }
-       
+        [Required]
+       public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
     }
 }

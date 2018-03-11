@@ -263,9 +263,146 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet("{UserId?}/{RoleName?}")]
         public async Task<IActionResult> EditUser(int UserId,string RoleName)
         {
-           
-            return View();
+            UsersViewModel newUser = null;
+            switch (RoleName)
+            {
+                case "Administrator":
+                    var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
+                    if (AdminData != null)
+                    {
+                       
+                        newUser = new UsersViewModel();
+                        newUser.FirstName = AdminData.FirstName;
+                        newUser.LastName = AdminData.LastName;
+                        newUser.Email = AdminData.EmailAddress;
+                        newUser.IsActive = AdminData.IsActive;
+                        newUser.UserID = UserId;                           
+                        newUser.RoleName = RoleName;
+                         
+                    }
+                    else
+                    {
+                        ViewData["Message"] = "No Users found for Selected UserID";
+                    }
+                    break;
+                case "Professional":
+                    var UserData = _db.Professionals.Where(x => x.ProfessionalId == UserId).FirstOrDefault();
+                    if (UserData != null)
+                    {
+                        newUser = new UsersViewModel();
+                        newUser.FirstName = UserData.FirstName;
+                        newUser.LastName = UserData.LastName;
+                        newUser.Email = UserData.EmailAddress;
+                        newUser.IsActive = UserData.IsActive;
+                        newUser.UserID = UserId;
+                        newUser.RoleName = RoleName;
+                    }
+                    else
+                    {
+                        ViewData["Message"] = "No Users found for Selected Role";
+                    }
+                    break;
+                case "Student":
+                    var StudentData = _db.Students.Where(x => x.StudentId == UserId).FirstOrDefault();
+                    if (StudentData != null)
+                    {
+                        newUser = new UsersViewModel();
+                        newUser.FirstName = StudentData.FirstName;
+                        newUser.LastName = StudentData.LastName;
+                        newUser.Email = StudentData.EmailAddress;
+                        newUser.IsActive = StudentData.IsActive;
+                        newUser.UserID = UserId;
+                        newUser.RoleName = RoleName;
+                    }
+                    else
+                    {
+                        ViewData["Message"] = "No Users found for Selected Role";
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            return View(newUser);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateUser(UsersViewModel usersViewModel)
+        {
+            if(ModelState.IsValid)
+            {
+
+                switch (usersViewModel.RoleName)
+                {
+                    case "Administrator":
+                       // var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
+                        if (usersViewModel != null)
+                        {
+                            var administrator = _db.Administrators.SingleOrDefault(x => x.AdminId == usersViewModel.UserID);
+                            if(administrator!=null)
+                            {
+                                administrator.FirstName = usersViewModel.FirstName;
+                                administrator.LastName = usersViewModel.LastName;
+                                administrator.EmailAddress = usersViewModel.Email;
+                                administrator.IsActive = usersViewModel.IsActive;
+                                _db.SaveChanges();
+                                ViewData["Message"] = "Administrator Record Updated Successfully";
+                            }                           
+
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "Input is not valid";
+                        }
+                        break;
+                    case "Professional":
+                        if (usersViewModel != null)
+                        {
+                            var professional = _db.Professionals.SingleOrDefault(x => x.ProfessionalId == usersViewModel.UserID);
+                            if (professional != null)
+                            {
+                                professional.FirstName = usersViewModel.FirstName;
+                                professional.LastName = usersViewModel.LastName;
+                                professional.EmailAddress = usersViewModel.Email;
+                                professional.IsActive = usersViewModel.IsActive;
+                                _db.SaveChanges();
+                                ViewData["Message"] = "Professional Record Updated Successfully";
+                            }
+                            
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "Input is not valid";
+                        }
+                        break;
+                    case "Student":
+                        if (usersViewModel != null)
+                        {
+                            var student = _db.Students.SingleOrDefault(x => x.StudentId == usersViewModel.UserID);
+                            if (student != null)
+                            {
+                                student.FirstName = usersViewModel.FirstName;
+                                student.LastName = usersViewModel.LastName;
+                                student.EmailAddress = usersViewModel.Email;
+                                student.IsActive = usersViewModel.IsActive;
+                                _db.SaveChanges();
+                                ViewData["Message"] = "Student Record Updated Successfully";
+                            }
+
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "Input is not valid";
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+            }
+            return View("EditUser", usersViewModel);
+        }
     }
 }

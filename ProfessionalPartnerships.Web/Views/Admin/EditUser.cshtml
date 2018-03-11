@@ -1,0 +1,55 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.UsersViewModel
+
+@{
+    ViewData["Title"] = "EditUser";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<div class="row">
+    <form method="post" action="@Url.Action("UpdateUser", "Admin")">
+        <div class="col-md-4">
+            <section>
+                <h4>User Details</h4>
+
+
+
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(x => x.UserID)
+                @Html.HiddenFor(x => x.RoleName)
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for=" FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>               
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label asp-for="IsActive">
+                            <input asp-for="IsActive" />
+                            @Html.DisplayNameFor(m => m.IsActive)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Update</button>
+                </div>
+
+            </section>
+        </div>
+       
+    </form>
+</div>
