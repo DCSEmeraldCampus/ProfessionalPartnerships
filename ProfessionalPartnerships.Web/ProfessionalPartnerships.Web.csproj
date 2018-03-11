@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-ProfessionalPartnerships.Web-E90BF4E7-5794-4628-B1BE-1D081C84FEC9</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/36c39dcf-418a-4c56-8d33-c3b542f50f15/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ProfessionalPartnerships.Web</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/36c39dcf-418a-4c56-8d33-c3b542f50f15/resourcegroups/Default-ApplicationInsights-EastUS/providers/microsoft.insights/components/ProfessionalPartnerships.Web</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +31,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProfessionalPartnerships.Data\ProfessionalPartnerships.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>
