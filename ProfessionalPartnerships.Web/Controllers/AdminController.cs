@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using ProfessionalPartnerships.Web.Models.AdminViewModels;
 using ProfessionalPartnerships.Data.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using ProfessionalPartnerships.Web.Models;
 
 namespace ProfessionalPartnerships.Web.Controllers
@@ -66,40 +67,81 @@ namespace ProfessionalPartnerships.Web.Controllers
             var model = new ManageProgramsViewModel
             {
                 Programs = (from p in _db.Programs
-                            select new ProgramsViewModel()
-                            {
-                                ProgramId = p.ProgramId,
-                                ProgramTypeName = _db.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId)
-                                    .FirstOrDefault().Name,
-                                SemesterName = _db.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
-                                PointOfContactName =
-                                    _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
-                                        .FirstOrDefault().FirstName
-                                    + " " + _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
-                                        .FirstOrDefault().LastName,
-                                AvailabilityDate = p.AvailabilityDate,
-                                StartDate = p.StartDate,
-                                EndDate = p.EndDate,
-                                IsActive = p.IsActive,
-                                MaximumStudentCount = p.MaximumStudentCount,
-                                Description = p.Description,
-                                IsApproved = p.IsApproved
-                            }).ToList(),
+                    select new ProgramsViewModel()
+                    {
+                        ProgramId = p.ProgramId,
+                        ProgramTypeName = _db.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId)
+                            .FirstOrDefault().Name,
+                        SemesterName = _db.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
+                        PointOfContactName =
+                            _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
+                                .FirstOrDefault().FirstName
+                            + " " + _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
+                                .FirstOrDefault().LastName,
+                        AvailabilityDate = p.AvailabilityDate,
+                        StartDate = p.StartDate,
+                        EndDate = p.EndDate,
+                        IsActive = p.IsActive,
+                        MaximumStudentCount = p.MaximumStudentCount,
+                        Description = p.Description,
+                        IsApproved = p.IsApproved
+                    }).ToList(),
                 ProgramTypes = _db.ProgramTypes.ToList()
             };
 
             return View(model);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> CreateProgram()
-        //{
-        //    var vm = new ProgramsViewModel();
-        //    vm.SemesterOptions = _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
-        //    vm.ProgramTypeOptions = _db.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
-        //    vm.PointOfContactProfessionalOptions = _db.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
-        //    return View(vm);
-        //}
+
+        [HttpGet]
+        public ViewResult Reviews()
+        {
+            var model = new ManageReviewsViewModel
+            {
+                ProgramReviewSummaries = _db.Programs
+                    .Include(w => w.StudentReviews)
+                    .Include(w => w.ProgramType)
+                    .Include(w => w.Semester)
+                    .Select(w => new ProgramReviewSummary
+                    {
+                        ProgramId = w.ProgramId,
+                        AverageReview = w.StudentReviews.Any() ? (decimal?)w.StudentReviews.Average(x => x.Stars) : null,
+                        NumberOfReviews = w.StudentReviews.Count(),
+                        ProgramDescription = w.Description,
+                        ProgramType = w.ProgramType.Name,
+                        ProgramSemester = w.Semester.Name
+                    }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ViewResult Review(int programId)
+        {
+            var programReviewsViewModel = _db.Programs
+                .Include(w => w.StudentReviews)
+                .Include(w => w.ProgramType)
+                .Include(w => w.Semester)
+                .Where(w => w.ProgramId == programId)
+                .Select(w => new ProgramReviewsViewModel
+                {
+                    ProgramId = w.ProgramId,
+                    AverageReview = w.StudentReviews.Any() ? (decimal?) w.StudentReviews.Average(x => x.Stars) : null,
+                    NumberOfReviews = w.StudentReviews.Count(),
+                    ProgramDescription = w.Description,
+                    ProgramType = w.ProgramType.Name,
+                    ProgramSemester = w.Semester.Name,
+                    ProgramReviews = w.StudentReviews.Select(x => new ProgramReview
+                    {
+                        Note = x.Note,
+                        Rating = (int)x.Stars,
+                        StudentReviewId = x.StudentReviewId
+                    }).ToList()
+                }).FirstOrDefault();
+
+            return View(programReviewsViewModel);
+        }
 
         [HttpGet]
         public IActionResult EditProgram(int id)

@@ -1,0 +1,63 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.ManageReviewsViewModel
+
+@{
+  ViewData["Title"] = "Manage Reviews";
+}
+
+<style type="text/css">
+  .clickableRow {
+    cursor: pointer;
+  }
+
+    .clickableRow:hover {
+      background-color: #f5f5f5;
+    }
+</style>
+
+<div class="panel panel-default top-buffer">
+  <div class="panel-heading">@ViewData["Title"]</div>
+  <div class="panel-body">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Program Type</th>
+        <th>Semester</th>
+        <th>Number of Reviews</th>
+        <th>Average Review</th>
+        <th width="50%">Description</th>
+      </tr>
+      </thead>
+      <tbody>
+      @foreach (var item in Model.ProgramReviewSummaries)
+      {
+        <tr class="clickableRow"  onclick="location.href = '@(Url.Action("Review", new{programId = @item.ProgramId}))'">
+          <td>@item.ProgramType</td>
+          <td>@item.ProgramSemester</td>
+          <td>@item.NumberOfReviews</td>
+          <td>
+            @if (item.AverageReview != null)
+            {
+              <div class="rateYo" data-rateyo-rating="@item.AverageReview" data-rateyo-read-only="true" data-rateyo-precision="2"></div>
+            }
+            else
+            {
+              <span>N/A</span>
+            }
+          </td>
+          <td>@item.ProgramDescription</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@section Scripts {
+  <script>
+    $(document).ready(function () {
+
+      $(".rateYo").rateYo();
+
+    });
+  </script>
+}

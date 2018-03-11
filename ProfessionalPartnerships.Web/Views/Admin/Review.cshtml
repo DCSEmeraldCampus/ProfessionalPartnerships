@@ -1,0 +1,92 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.ProgramReviewsViewModel
+
+@{
+  ViewData["Title"] = "Program Reviews";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<div class="panel panel-default top-buffer">
+  <div class="panel-heading">Overview</div>
+  <div class="panel-body">
+    <div style="margin: 20px;">
+      <table class="col-xs-12 table">
+        <tbody>
+        <tr>
+          <td>
+            <b>Program Type: </b>
+          </td>
+          <td>@Model.ProgramType</td>
+          <td>
+            <b>Semester: </b>
+          </td>
+          <td>@Model.ProgramSemester</td>
+        </tr>
+        <tr>
+          <td>
+            <b>Number of Reviews: </b>
+          </td>
+          <td>@Model.NumberOfReviews</td>
+          <td>
+            <b>Average Review: </b>
+          </td>
+          <td>
+            @if (Model.AverageReview != null)
+            {
+              <div class="rateYo" data-rateyo-rating="@Model.AverageReview" data-rateyo-read-only="true" data-rateyo-precision="2"></div>
+            }
+            else
+            {
+              <span>N/A</span>
+            }
+
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>Description: </b>
+          </td>
+          <td colspan="3">@Model.ProgramDescription</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-default top-buffer">
+  <div class="panel-heading">Reviews</div>
+
+  <div class="panel-body">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Rating</th>
+        <th>Note</th>
+      </tr>
+      </thead>
+      <tbody>
+      @foreach (var item in Model.ProgramReviews)
+      {
+        <tr>
+          <td>
+            <div class="rateYo" data-rateyo-rating="@item.Rating" data-rateyo-read-only="true" data-rateyo-precision="2"></div>
+          </td>
+          <td>@item.Note</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+@section Scripts {
+  <script>
+    $(document).ready(function() {
+
+      $(".rateYo").rateYo();
+
+    });
+  </script>
+}
