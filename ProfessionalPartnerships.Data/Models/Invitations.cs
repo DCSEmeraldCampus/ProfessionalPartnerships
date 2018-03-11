@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ProfessionalPartnerships.Data.Models
 {
@@ -9,9 +8,8 @@ namespace ProfessionalPartnerships.Data.Models
         public string EmailAddress { get; set; }
         public Guid InvitationCode { get; set; }
         public bool IsActive { get; set; }
-        public int? CompanyId { get; set; }
         public string Role { get; set; }
-
+        public int CompanyId { get; set; }
         public Companies Company { get; set; }
     }
 }

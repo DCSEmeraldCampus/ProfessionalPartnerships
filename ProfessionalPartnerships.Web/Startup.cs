@@ -12,6 +12,7 @@ using ProfessionalPartnerships.Web.Data;
 using ProfessionalPartnerships.Web.Models;
 using ProfessionalPartnerships.Web.Services;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Services.Interface;
 
 namespace ProfessionalPartnerships.Web
 {
@@ -39,6 +40,7 @@ namespace ProfessionalPartnerships.Web
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IInvitationService, InvitationService>();
 
             services.AddAuthentication().AddGoogle(googleOptions =>
             {
@@ -46,7 +48,9 @@ namespace ProfessionalPartnerships.Web
                 googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
             });
 
-            services.AddMvc();
+            services.AddMvc().AddSessionStateTempDataProvider();
+
+            services.AddSession(); ;
 
             var serviceProvider = services.BuildServiceProvider();
             
@@ -90,7 +94,7 @@ namespace ProfessionalPartnerships.Web
 
             
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseAuthentication();
 
             app.UseMvc(routes =>

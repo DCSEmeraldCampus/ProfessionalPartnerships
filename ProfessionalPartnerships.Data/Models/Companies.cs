@@ -24,5 +24,6 @@ namespace ProfessionalPartnerships.Data.Models
         public Professionals PrimaryProfessional { get; set; }
         public ICollection<Invitations> Invitations { get; set; }
         public ICollection<Professionals> Professionals { get; set; }
+        public IEnumerable<Invitations> Invitations { get; set; }
     }
 }
