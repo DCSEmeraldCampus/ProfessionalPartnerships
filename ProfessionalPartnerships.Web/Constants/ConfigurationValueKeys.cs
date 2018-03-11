@@ -10,5 +10,7 @@ namespace ProfessionalPartnerships.Web.Constants
         public const string SystemSendGridApiKey = "SystemSendGridApiKey";
         public const string SystemEmailAddress = "SystemEmailAddress";
         public const string SystemEmailName = "SystemEmailName";
+        public const string SystemGoogleClientId = "SystemGoogleClientId";
+        public const string SystemClientSecret = "SystemClientSecret";
     }
 }
