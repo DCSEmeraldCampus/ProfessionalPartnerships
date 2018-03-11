@@ -1,0 +1,96 @@
+﻿@model ProfessionalPartnerships.Web.Models.ProfessionalViewModels.ManageCompanyUsersViewModel
+
+@{
+    ViewBag.Title = "Manage Users";
+    Layout = "_Layout";
+}
+
+<h2>Users for @Model.CompanyName</h2>
+
+
+<div class="row" id="ManageUserFilter">
+    <div class="col-lg-3 col-md-3 col-sm-3">1</div>
+    <div class="col-lg-3 col-md-3 col-sm-3">2</div>
+    <div class="col-lg-3 col-md-3 col-sm-3">3</div>
+
+    <div class="modal fade" id="invite" role="dialog">
+        <div class="modal-dialog modal-md">
+            <!-- Modal content no 1-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title text-center">Create Invitation</h4>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal" id="invitationForm">
+                        <div class="input-group top-buffer">
+                            <input type="email" data-error="Bruh, that email address is invalid" required class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2" name="emailAddress">
+                            <span class="input-group-addon" id="basic-addon2">@@gmail.com</span>
+                        </div>
+                        <div class="input-group top-buffer">
+                            <label class="radio-inline"><input type="radio" id="createProfessional" checked value="Professional" required name="role">Professional</label>
+                        </div>
+                        <div class="input-group top-buffer" id="companySelectorContainer">
+                            <select class="form-control" id="inviteCompany" type="number" name="companyId">
+                                <option selected value="@Model.CompanyId">@Model.CompanyName</option>
+                            </select>
+                        </div>
+                        <div class="input-group top-buffer">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="glyphicon glyphicon-us"></span> Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-default top-buffer">
+        <div class="panel-heading">Users for @Model.CompanyName</div>
+        <div class="panel-body">
+            <div class="">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
+                        <span class="glyphicon glyphicon-plus"></span> Invite User
+                    </button>
+                </div>
+            </div></div>
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Is Active</th>
+                <th>Edit</th>
+            </tr>
+            @foreach (var pro in Model.Professionals)
+            {
+                <tr>
+                    <td><span class="glyphicon glyphicon-user"></span></td>
+                    <td>@pro.FirstName</td>
+                    <td>@pro.LastName</td>
+                    <td>@pro.EmailAddress</td>
+                    <td>@pro.Phone</td>
+                    <td>
+                        @if (pro.IsActive)
+                        {
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        }
+                        else
+                        {
+                            <span class="glyphicon glyphicon-thumbs-down"></span>
+                        }
+                    </td>
+                    <td><a href="EditProfessional/@pro.ProfessionalId"><button class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Edit</button></a></td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
