@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProfessionalPartnerships.Data.Models;
+using ProfessionalPartnerships.Web.Models.AdminViewModels.Enrollments;
 
 namespace ProfessionalPartnerships.Web.Models.AdminViewModels
 {
@@ -36,6 +37,9 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         [Required]
         public bool IsActive { get; set; }
 
+        // MDT 03-11-18, Applied+Approved
+        public int EnrollmentCount { get; set; }
+
         [Required]
         public int MaximumStudentCount { get; set; }
         
@@ -51,5 +55,11 @@ namespace ProfessionalPartnerships.Web.Models.AdminViewModels
         public bool IsApproved { get; set; }
 
         public bool ActionWasSuccessful { get; set; }
+
+        public int EnrollmentStatusId_Applied = (int)Enrollments.Enums.EnrollmentStatusEnum.Applied;
+        public int EnrollmentStatusId_Approved = (int)Enrollments.Enums.EnrollmentStatusEnum.Approved;
+        public int EnrollmentStatusId_Declined = (int)Enrollments.Enums.EnrollmentStatusEnum.Declined;
+
+        public List<EnrollmentsViewModel> EnrollmentsViewModels { get; set; } 
     }
 }

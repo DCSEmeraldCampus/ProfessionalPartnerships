@@ -10,6 +10,8 @@ using ProfessionalPartnerships.Web.Models.AdminViewModels;
 using ProfessionalPartnerships.Data.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProfessionalPartnerships.Web.Models;
+using Microsoft.EntityFrameworkCore;
+using ProfessionalPartnerships.Web.Models.AdminViewModels.Enrollments.Enums;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
@@ -37,22 +39,43 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public ViewResult Programs()
         {
-            var model = (from p in _db.Programs
-                         select new ProgramsViewModel()
-                         {
-                             ProgramId = p.ProgramId,
-                             ProgramTypeName = _db.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId).FirstOrDefault().Name,
-                             SemesterName = _db.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
-                             PointOfContactName = _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().FirstName
-                                            + " " + _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().LastName,
-                             AvailabilityDate = p.AvailabilityDate,
-                             StartDate = p.StartDate,
-                             EndDate = p.EndDate,
-                             IsActive = p.IsActive,
-                             MaximumStudentCount = p.MaximumStudentCount,
-                             Description = p.Description,
-                             IsApproved = p.IsApproved
-                         });
+            var model = _db.Programs
+                .Include(i => i.ProgramType)
+                .Include(i => i.Semester)
+                .Include(i => i.PointOfContactProfessional)
+                .Include(i => i.Enrollments)
+                .Select(s => new ProgramsViewModel()
+                {
+                    ProgramId = s.ProgramId,
+
+                    ProgramTypeName =
+                        s.ProgramType != null
+                        ? s.ProgramType.Name
+                        : string.Empty,
+
+                    SemesterName =
+                        s.Semester != null
+                        ? s.Semester.Name
+                        : string.Empty,
+
+                    PointOfContactName =
+                        s.PointOfContactProfessional != null
+                        ? $"{s.PointOfContactProfessional.FirstName} {s.PointOfContactProfessional.LastName}"
+                        : string.Empty,
+
+                    AvailabilityDate = s.AvailabilityDate,
+                    StartDate = s.StartDate,
+                    EndDate = s.EndDate,
+                    IsActive = s.IsActive,
+                    EnrollmentCount = 
+                        s.Enrollments != null
+                        ? s.Enrollments.Count(c => c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Applied 
+                                                || c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Approved)
+                        : 0,
+                    MaximumStudentCount = s.MaximumStudentCount,
+                    Description = s.Description,
+                    IsApproved = s.IsApproved
+                });
 
             return View(model);
         }
@@ -70,13 +93,21 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> EditProgram(string id)
         {
-            var program = _db.Programs.Find(int.Parse(id));
+            var programId = int.Parse(id);
+            var program = _db.Programs.Find(programId);
+
             var vm = new ProgramsViewModel();
-            vm.SemesterOptions = _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
+            vm.SemesterOptions = _db.Semesters
+                .Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name })
+                .ToList();
             vm.SelectedSemesterId = program.SemesterId.ToString();
-            vm.ProgramTypeOptions = _db.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
+            vm.ProgramTypeOptions = _db.ProgramTypes
+                .Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name })
+                .ToList();
             vm.SelectedProgramTypeId = program.ProgramTypeId.ToString();
-            vm.PointOfContactProfessionalOptions = _db.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
+            vm.PointOfContactProfessionalOptions = _db.Professionals
+                .Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName })
+                .ToList();
             vm.SelectedPointOfContactProfessionalId = program.PointOfContactProfessionalId.ToString();
             vm.IsActive = program.IsActive;
             vm.IsApproved = program.IsApproved;
@@ -86,6 +117,15 @@ namespace ProfessionalPartnerships.Web.Controllers
             vm.AvailabilityDate = program.AvailabilityDate;
             vm.EndDate = program.EndDate;
             vm.Description = program.Description;
+
+            // TODO MDT 03-11-18, add enrollments
+            vm.EnrollmentsViewModels = _db.Enrollments
+                .Include(i => i.EnrollmentStatus)
+                .Include(i => i.Student)
+                .Where(w => w.ProgramId == vm.ProgramId)
+                .Select(s => new Models.AdminViewModels.Enrollments.EnrollmentsViewModel(s))
+                .ToList();
+        
             return View(vm);
         }
 
@@ -163,6 +203,36 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveEnrollment(string id)
+        {
+            var enrollmentId = int.Parse(id);
+            var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
+            enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Approved;
+
+            _db.Update(enrollment);
+            _db.SaveChanges();
+            
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeclineEnrollment(string id)
+        {
+            var enrollmentId = int.Parse(id);
+            var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
+            enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Declined;
+
+            _db.Update(enrollment);
+            _db.SaveChanges();
+
+            return View();
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> SearchUsers()
@@ -188,19 +258,19 @@ namespace ProfessionalPartnerships.Web.Controllers
                 {
                     case "Administrator":
                         var AdminList = _db.Administrators.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
-                        if(AdminList!=null && AdminList.Count>0)
+                        if (AdminList != null && AdminList.Count > 0)
                         {
-                            foreach(var admin in AdminList)
+                            foreach (var admin in AdminList)
                             {
                                 UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (admin.FirstName +" "+ admin.LastName).ToString();
+                                newUser.UserName = (admin.FirstName + " " + admin.LastName).ToString();
                                 newUser.UserID = admin.AdminId;
                                 newUser.Email = admin.EmailAddress;
                                 newUser.RoleName = SelectedRole.SelectRole;
                                 newUser.IsActive = admin.IsActive;
                                 model.AllUsers.Add(newUser);
                             }
-                           
+
                         }
                         else
                         {
@@ -214,7 +284,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                             foreach (var users in UserList)
                             {
                                 UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (users.FirstName + " " +users.LastName).ToString();
+                                newUser.UserName = (users.FirstName + " " + users.LastName).ToString();
                                 newUser.UserID = users.ProfessionalId;
                                 newUser.Email = users.EmailAddress;
                                 newUser.RoleName = SelectedRole.SelectRole;
@@ -229,16 +299,16 @@ namespace ProfessionalPartnerships.Web.Controllers
                         break;
                     case "Student":
                         var StudentList = _db.Students.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
-                        if( StudentList!=null && StudentList.Count>0)
+                        if (StudentList != null && StudentList.Count > 0)
                         {
-                            foreach(var student in StudentList)
+                            foreach (var student in StudentList)
                             {
                                 UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (student.FirstName +" " +student.LastName).ToString();
+                                newUser.UserName = (student.FirstName + " " + student.LastName).ToString();
                                 newUser.UserID = student.StudentId;
                                 newUser.Email = student.EmailAddress;
                                 newUser.RoleName = SelectedRole.SelectRole;
-                               newUser.IsActive = student.IsActive;
+                                newUser.IsActive = student.IsActive;
                                 model.AllUsers.Add(newUser);
                             }
                         }
@@ -248,9 +318,9 @@ namespace ProfessionalPartnerships.Web.Controllers
                         }
                         break;
 
-                        default:
+                    default:
                         break;
-                }              
+                }
             }
             model.Roles = new List<SelectListItem>();
             model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
@@ -261,7 +331,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpGet("{UserId?}/{RoleName?}")]
-        public async Task<IActionResult> EditUser(int UserId,string RoleName)
+        public async Task<IActionResult> EditUser(int UserId, string RoleName)
         {
             UsersViewModel newUser = null;
             switch (RoleName)
@@ -270,15 +340,15 @@ namespace ProfessionalPartnerships.Web.Controllers
                     var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
                     if (AdminData != null)
                     {
-                       
+
                         newUser = new UsersViewModel();
                         newUser.FirstName = AdminData.FirstName;
                         newUser.LastName = AdminData.LastName;
                         newUser.Email = AdminData.EmailAddress;
                         newUser.IsActive = AdminData.IsActive;
-                        newUser.UserID = UserId;                           
+                        newUser.UserID = UserId;
                         newUser.RoleName = RoleName;
-                         
+
                     }
                     else
                     {
@@ -330,17 +400,17 @@ namespace ProfessionalPartnerships.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUser(UsersViewModel usersViewModel)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
 
                 switch (usersViewModel.RoleName)
                 {
                     case "Administrator":
-                       // var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
+                        // var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
                         if (usersViewModel != null)
                         {
                             var administrator = _db.Administrators.SingleOrDefault(x => x.AdminId == usersViewModel.UserID);
-                            if(administrator!=null)
+                            if (administrator != null)
                             {
                                 administrator.FirstName = usersViewModel.FirstName;
                                 administrator.LastName = usersViewModel.LastName;
@@ -348,7 +418,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                                 administrator.IsActive = usersViewModel.IsActive;
                                 _db.SaveChanges();
                                 ViewData["Message"] = "Administrator Record Updated Successfully";
-                            }                           
+                            }
 
                         }
                         else
@@ -369,7 +439,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                                 _db.SaveChanges();
                                 ViewData["Message"] = "Professional Record Updated Successfully";
                             }
-                            
+
                         }
                         else
                         {

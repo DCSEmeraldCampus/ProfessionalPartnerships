@@ -3,105 +3,240 @@
 @{
     ViewData["Title"] = "Edit Program";
 }
+<html>
+<body>
+    <h2>Edit Program</h2>
 
-<h2>Edit Program</h2>
+    @if (!Model.ActionWasSuccessful)
+    {
+        <h4>Programs</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="EditProgram">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="ProgramId" />
+                    <div class="form-group">
+                        <label asp-for="SelectedSemesterId" class="control-label"></label>
 
-@if (!Model.ActionWasSuccessful)
-{
-    <h4>Programs</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="EditProgram">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="ProgramId" />
-                <div class="form-group">
-                    <label asp-for="SelectedSemesterId" class="control-label"></label>
+                        @Html.DropDownListFor(m => m.SelectedSemesterId,
+                                                                                                        Model.SemesterOptions,
+                                                                                                        "- Select a semester -",
+                                                                                                        new { @class = "form-control" })
 
-                    @Html.DropDownListFor(m => m.SelectedSemesterId,
-                               Model.SemesterOptions,
-                               "- Select a semester -",
-                               new { @class = "form-control" })
-
-                    <span asp-validation-for="SelectedSemesterId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SelectedProgramTypeId" class="control-label"></label>
-
-                    @Html.DropDownListFor(m => m.SelectedProgramTypeId,
-                               Model.ProgramTypeOptions,
-                               "- Select a program type -",
-                               new { @class = "form-control" })
-
-                    <span asp-validation-for="SelectedProgramTypeId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="AvailabilityDate" class="control-label"></label>
-                    <input asp-for="AvailabilityDate" class="form-control" />
-                    <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StartDate" class="control-label"></label>
-                    <input asp-for="StartDate" class="form-control" />
-                    <span asp-validation-for="StartDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="EndDate" class="control-label"></label>
-                    <input asp-for="EndDate" class="form-control" />
-                    <span asp-validation-for="EndDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
-                        </label>
+                        <span asp-validation-for="SelectedSemesterId" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="MaximumStudentCount" class="control-label"></label>
-                    <input asp-for="MaximumStudentCount" class="form-control" />
-                    <span asp-validation-for="MaximumStudentCount" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SelectedPointOfContactProfessionalId" class="control-label"></label>
+                    <div class="form-group">
+                        <label asp-for="SelectedProgramTypeId" class="control-label"></label>
 
-                    @Html.DropDownListFor(m => m.SelectedPointOfContactProfessionalId,
-                                      Model.PointOfContactProfessionalOptions,
-                                      "- Select a point of contact -",
-                                      new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.SelectedProgramTypeId,
+                                                                                                        Model.ProgramTypeOptions,
+                                                                                                        "- Select a program type -",
+                                                                                                        new { @class = "form-control" })
 
-                    <span asp-validation-for="SelectedPointOfContactProfessionalId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Description" class="control-label"></label>
-                    <textarea rows="5" asp-for="Description" class="form-control"> </textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsApproved" /> @Html.DisplayNameFor(model => model.IsApproved)
-                        </label>
+                        <span asp-validation-for="SelectedProgramTypeId" class="text-danger"></span>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="AvailabilityDate" class="control-label"></label>
+                        <input asp-for="AvailabilityDate" class="form-control" />
+                        <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndDate" class="control-label"></label>
+                        <input asp-for="EndDate" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaximumStudentCount" class="control-label"></label>
+                        <input asp-for="MaximumStudentCount" class="form-control" />
+                        <span asp-validation-for="MaximumStudentCount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SelectedPointOfContactProfessionalId" class="control-label"></label>
+
+                        @Html.DropDownListFor(m => m.SelectedPointOfContactProfessionalId,
+                                                                                                               Model.PointOfContactProfessionalOptions,
+                                                                                                               "- Select a point of contact -",
+                                                                                                               new { @class = "form-control" })
+
+                        <span asp-validation-for="SelectedPointOfContactProfessionalId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea rows="5" asp-for="Description" class="form-control"> </textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input asp-for="IsApproved" /> @Html.DisplayNameFor(model => model.IsApproved)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save Changes" class="btn btn-default" />
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <div>
+                    <h5>Applied</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>EnrollmentId</th>
+                                <th>EnrollmentStatusName</th>
+                                <th>StudentName</th>
+                                <th>Notes</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Applied))
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Notes)</td>
+                                    <td>
+                                        <button id="approveEnrollment"
+                                                data-value="@item.EnrollmentId"
+                                                type="button"
+                                                class="btn btn-primary">
+                                            Approve
+                                        </button>
+                                        <button id="declineEnrollment"
+                                                data-value="@item.EnrollmentId"
+                                                type="button"
+                                                class="btn btn-primary">
+                                            Decline
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Save Changes" class="btn btn-default" />
+                <div>
+                    <h5>Approved</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>EnrollmentId</th>
+                                <th>EnrollmentStatusName</th>
+                                <th>StudentName</th>
+                                <th>Notes</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Approved))
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Notes)</td>
+                                    <td>
+                                        <button id="declineEnrollment"
+                                                data-value="@item.EnrollmentId"
+                                                type="button"
+                                                class="btn btn-primary">
+                                            Decline
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
-            </form>
+                <div>
+                    <h5>Declined</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>EnrollmentId</th>
+                                <th>EnrollmentStatusName</th>
+                                <th>StudentName</th>
+                                <th>Notes</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Declined))
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Notes)</td>
+                                    <td>
+                                        <button id="approveEnrollment"
+                                                data-id="@item.EnrollmentId"
+                                                type="button"
+                                                class="btn btn-primary">
+                                            Approve
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
 
-@if (Model.ActionWasSuccessful)
-{
+    @if (Model.ActionWasSuccessful)
+    {
+        <div>
+            <label> Program edit was successful. </label>
+        </div>
+    }
     <div>
-        <label> Program edit was successful. </label>
+        <a asp-action="Programs">Back to List</a>
     </div>
-}
-<div>
-    <a asp-action="Programs">Back to List</a>
-</div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script type="text/javascript">
+            $("#approveEnrollment").click(function () {
+                alert("approveEnrollment; id: " + $(this).attr("data-value"));
+                //$.ajax({
+                //    type: "POST",
+                //    url: url,
+                //    data: data,
+                //    success: success,
+                //    dataType: dataType
+                //});
+            });
+            $("#declineEnrollment").click(function () {
+                alert("declineEnrollment; id: " + $(this).attr("data-value"));
+                //$.ajax({
+                //    type: "POST",
+                //    url: url,
+                //    data: data,
+                //    success: success,
+                //    dataType: dataType
+                //});
+            });
+        </script>
+    }
+
+</body>
+</html>

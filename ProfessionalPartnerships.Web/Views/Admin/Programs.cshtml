@@ -15,27 +15,27 @@
             <th>@Html.DisplayNameFor(model => model.ProgramTypeName)</th>
             <th>@Html.DisplayNameFor(model => model.SemesterName)</th>
             <th>@Html.DisplayNameFor(model => model.PointOfContactName)</th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AvailabilityDate)
-                </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.StartDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EndDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IsActive)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaximumStudentCount)
-                </th>*@
-                <th width="50%">
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.IsApproved)
-                </th>*@
+            <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
+            <td>@Html.DisplayNameFor(model => model.EnrollmentCount)</td>
+            <td>@Html.DisplayNameFor(model => model.MaximumStudentCount)</td>
+            @*<th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaximumStudentCount)
+        </th>*@
+            <th width="50%">
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.IsApproved)
+        </th>*@
             <th></th>
         </tr>
     </thead>
@@ -45,31 +45,31 @@
             <td>@Html.DisplayFor(modelItem => item.ProgramTypeName)</td>
             <td>@Html.DisplayFor(modelItem => item.SemesterName)</td>
             <td>@Html.DisplayFor(modelItem => item.PointOfContactName)</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvailabilityDate)
-            </td>
+            <td>@Html.DisplayFor(modelItem => item.AvailabilityDate)</td>
+            <td>@Html.DisplayFor(modelItem => item.EnrollmentCount)</td>
+            <td>@Html.DisplayFor(modelItem => item.MaximumStudentCount)</td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaximumStudentCount)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.StartDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EndDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsActive)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaximumStudentCount)
+        </td>*@
             <td width="50%">
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             @*<td>
-                @Html.DisplayFor(modelItem => item.IsApproved)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.IsApproved)
+        </td>*@
             <td>
-                @Html.ActionLink("Edit", "EditProgram", new { id=item.ProgramId }) |
-                @Html.ActionLink("Details", "ProgramDetails", new {  id=item.ProgramId  }) |
-                @Html.ActionLink("Delete", "DeleteProgram", new {  id=item.ProgramId })
+                @Html.ActionLink("Edit", "EditProgram", new { id = item.ProgramId }) |
+                @Html.ActionLink("Details", "ProgramDetails", new { id = item.ProgramId }) |
+                @Html.ActionLink("Delete", "DeleteProgram", new { id = item.ProgramId })
             </td>
         </tr>
 }
