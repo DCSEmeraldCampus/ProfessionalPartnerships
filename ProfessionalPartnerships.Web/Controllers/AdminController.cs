@@ -13,7 +13,7 @@ using ProfessionalPartnerships.Web.Models;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
-    
+
     public class AdminController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -63,55 +63,96 @@ namespace ProfessionalPartnerships.Web.Controllers
         [HttpGet]
         public ViewResult Programs()
         {
-            var model = (from p in _db.Programs
-                         select new ProgramsViewModel()
-                         {
-                             ProgramId = p.ProgramId,
-                             ProgramTypeName = _db.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId).FirstOrDefault().Name,
-                             SemesterName = _db.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
-                             PointOfContactName = _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().FirstName
-                                            + " " + _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId).FirstOrDefault().LastName,
-                             AvailabilityDate = p.AvailabilityDate,
-                             StartDate = p.StartDate,
-                             EndDate = p.EndDate,
-                             IsActive = p.IsActive,
-                             MaximumStudentCount = p.MaximumStudentCount,
-                             Description = p.Description,
-                             IsApproved = p.IsApproved
-                         });
+            var model = new ManageProgramsViewModel
+            {
+                Programs = (from p in _db.Programs
+                            select new ProgramsViewModel()
+                            {
+                                ProgramId = p.ProgramId,
+                                ProgramTypeName = _db.ProgramTypes.Where(pt => pt.ProgramTypeId == p.ProgramTypeId)
+                                    .FirstOrDefault().Name,
+                                SemesterName = _db.Semesters.Where(s => s.SemesterId == p.SemesterId).FirstOrDefault().Name,
+                                PointOfContactName =
+                                    _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
+                                        .FirstOrDefault().FirstName
+                                    + " " + _db.Professionals.Where(pr => pr.ProfessionalId == p.PointOfContactProfessionalId)
+                                        .FirstOrDefault().LastName,
+                                AvailabilityDate = p.AvailabilityDate,
+                                StartDate = p.StartDate,
+                                EndDate = p.EndDate,
+                                IsActive = p.IsActive,
+                                MaximumStudentCount = p.MaximumStudentCount,
+                                Description = p.Description,
+                                IsApproved = p.IsApproved
+                            }).ToList(),
+                ProgramTypes = _db.ProgramTypes.ToList()
+            };
 
             return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> CreateProgram()
-        {
-            var vm = new ProgramsViewModel();
-            vm.SemesterOptions = _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
-            vm.ProgramTypeOptions = _db.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
-            vm.PointOfContactProfessionalOptions = _db.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
-            return View(vm);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> CreateProgram()
+        //{
+        //    var vm = new ProgramsViewModel();
+        //    vm.SemesterOptions = _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
+        //    vm.ProgramTypeOptions = _db.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
+        //    vm.PointOfContactProfessionalOptions = _db.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
+        //    return View(vm);
+        //}
 
         [HttpGet]
-        public IActionResult EditProgram(string id)
+        public IActionResult EditProgram(int id)
         {
-            var program = _db.Programs.Find(int.Parse(id));
-            var vm = new ProgramsViewModel();
-            vm.SemesterOptions = _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name }).ToList();
-            vm.SelectedSemesterId = program.SemesterId.ToString();
-            vm.ProgramTypeOptions = _db.ProgramTypes.Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList();
-            vm.SelectedProgramTypeId = program.ProgramTypeId.ToString();
-            vm.PointOfContactProfessionalOptions = _db.Professionals.Select(x => new SelectListItem() { Value = x.ProfessionalId.ToString(), Text = x.FirstName + " " + x.LastName }).ToList();
-            vm.SelectedPointOfContactProfessionalId = program.PointOfContactProfessionalId.ToString();
-            vm.IsActive = program.IsActive;
-            vm.IsApproved = program.IsApproved;
-            vm.MaximumStudentCount = program.MaximumStudentCount;
-            vm.ProgramId = program.ProgramId;
-            vm.StartDate = program.StartDate;
-            vm.AvailabilityDate = program.AvailabilityDate;
-            vm.EndDate = program.EndDate;
-            vm.Description = program.Description;
+            ProgramsViewModel vm;
+            if (id > 0)
+            {
+                var program = _db.Programs.Find(id);
+                vm = new ProgramsViewModel
+                {
+                    SemesterOptions =
+                        _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name })
+                            .ToList(),
+                    SelectedSemesterId = program.SemesterId.ToString(),
+                    ProgramTypeOptions = _db.ProgramTypes
+                        .Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList(),
+                    SelectedProgramTypeId = program.ProgramTypeId.ToString(),
+                    PointOfContactProfessionalOptions = _db.Professionals.Select(x =>
+                            new SelectListItem()
+                            {
+                                Value = x.ProfessionalId.ToString(),
+                                Text = x.FirstName + " " + x.LastName
+                            })
+                        .ToList(),
+                    SelectedPointOfContactProfessionalId = program.PointOfContactProfessionalId.ToString(),
+                    IsActive = program.IsActive,
+                    IsApproved = program.IsApproved,
+                    MaximumStudentCount = program.MaximumStudentCount,
+                    ProgramId = program.ProgramId,
+                    StartDate = program.StartDate,
+                    AvailabilityDate = program.AvailabilityDate,
+                    EndDate = program.EndDate,
+                    Description = program.Description
+                };
+            }
+            else
+            {
+                vm = new ProgramsViewModel
+                {
+                    SemesterOptions =
+                        _db.Semesters.Select(x => new SelectListItem() { Value = x.SemesterId.ToString(), Text = x.Name })
+                            .ToList(),
+                    ProgramTypeOptions = _db.ProgramTypes
+                        .Select(x => new SelectListItem() { Value = x.ProgramTypeId.ToString(), Text = x.Name }).ToList(),
+                    PointOfContactProfessionalOptions = _db.Professionals.Select(x =>
+                            new SelectListItem()
+                            {
+                                Value = x.ProfessionalId.ToString(),
+                                Text = x.FirstName + " " + x.LastName
+                            })
+                        .ToList(),
+                };
+            }
             return View(vm);
         }
 
@@ -166,27 +207,34 @@ namespace ProfessionalPartnerships.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProgram(ProgramsViewModel model)
         {
-            if (ModelState.IsValid)
+
+            Programs program;
+            if (model.ProgramId > 0)
             {
-                var program = _db.Programs.Find(model.ProgramId);
+                program = _db.Programs.Find(model.ProgramId);
                 _db.Update(program);
-
-                program.SemesterId = int.Parse(model.SelectedSemesterId);
-                program.ProgramTypeId = int.Parse(model.SelectedProgramTypeId);
-                program.PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId);
-                program.AvailabilityDate = model.AvailabilityDate;
-                program.StartDate = model.StartDate;
-                program.EndDate = model.EndDate;
-                program.IsActive = model.IsActive;
-                program.MaximumStudentCount = model.MaximumStudentCount;
-                program.Description = model.Description;
-                program.IsApproved = model.IsApproved;
-
-                await _db.SaveChangesAsync();
-                model.ActionWasSuccessful = true;
-                return View(model);
             }
-            return View(model);
+            else
+            {
+                program = new Programs();
+                _db.Programs.Add(program);
+            }
+
+            program.SemesterId = int.Parse(model.SelectedSemesterId);
+            program.ProgramTypeId = int.Parse(model.SelectedProgramTypeId);
+            program.PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId);
+            program.AvailabilityDate = model.AvailabilityDate;
+            program.StartDate = model.StartDate;
+            program.EndDate = model.EndDate;
+            program.IsActive = model.IsActive;
+            program.MaximumStudentCount = model.MaximumStudentCount;
+            program.Description = model.Description;
+            program.IsApproved = model.IsApproved;
+
+            await _db.SaveChangesAsync();
+            model.ActionWasSuccessful = true;
+            return RedirectToAction("Programs");
+
         }
 
         //[HttpPost]
@@ -277,7 +325,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             UsersViewModel user = null;
             var admin = _db.Administrators.FirstOrDefault(x => x.AdminId == id);
-            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            var roles = new List<string> { "Administrator", "Professional", "Student" };
             if (admin != null)
             {
                 user = new UsersViewModel
@@ -302,7 +350,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             UsersViewModel user = null;
             var admin = _db.Professionals.FirstOrDefault(x => x.ProfessionalId == id);
-            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            var roles = new List<string> { "Administrator", "Professional", "Student" };
             if (admin != null)
             {
                 user = new UsersViewModel
@@ -325,7 +373,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         public IActionResult EditStudent(int id)
         {
             UsersViewModel user = null;
-            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            var roles = new List<string> { "Administrator", "Professional", "Student" };
             var admin = _db.Students.FirstOrDefault(x => x.StudentId == id);
             if (admin != null)
             {
