@@ -3,42 +3,90 @@
 @{
     ViewData["Title"] = "Manage Companies";
 }
+<div class="panel panel-default top-buffer">
+    <div class="panel-heading">@ViewData["Title"]</div>
+    <div class="panel-body">
+        <div class="row" id="ManageCompaniesFilter">
+            <div class="col-lg-4 col-md-4 col-sm-4"><input type="text" id="textFilter" class="form-control" placeholder="Keyword" /></div>
+            <div class="col-lg-4 col-md-4 col-sm-4"><input type="checkbox" id="isActiveFilter" /> Show Active Only</div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <div class="btn-group bottom-buffer">
+                    <a href="/Companies/Edit">
+                        <button type="button" class="btn btn-success dropdown-toggle">
+                            <span class="glyphicon glyphicon-plus"></span> Add New
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-<div class="clearfix">
-    <div>
-        <h2>@ViewData["Title"]</h2>
-    </div>
-
-    <div class="form-group" style="float: right;">
-        @Html.ActionLink("Add New", "Edit", "Companies", null, new { @class = "btn btn-success" })
-    </div>
-</div>
-
-<div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">ID #</th>
-                <th scope="col">Name</th>
-                <th scope="col">Address</th>
-                <th scope="col">Primary Contact</th>
-                <th scope="col">Active</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var company in Model)
-            {
+        <div class="table">
+            <table class="table table-hover">
                 <tr>
-                    <th scope="row">@company.CompanyId</th>
-                    <td>
-                        @Html.ActionLink(company.Name, "Edit", "Companies", new { companyId = company.CompanyId }, null)
-                    </td>
-                    <td>@company.Address1</td>
-                    <td>@company.PrimaryProfessionalName</td>
-                    <td>@company.IsActive</td>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Primary Contact</th>
+                    <th scope="col">Active</th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+
+                <tbody>
+                    @foreach (var company in Model)
+                    {
+                        <tr class="companyRow">
+                            <td class="filterText">@company.Name</td>
+                            <td class="">@company.Address1</td>
+                            <td class="">@company.PrimaryProfessionalName</td>
+                            <td class="companyIsActiveDataCell" data-value="@company.IsActive">
+                                @if (company.IsActive)
+                                {
+                                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                                }
+                                else
+                                {
+                                    <span class="glyphicon glyphicon-thumbs-down"></span>
+                                }
+                            </td>
+                            <td><a href="/Companies/Edit/@company.CompanyId"><button class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Edit</button></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            
+            $("#isActiveFilter").change(function () {
+                $("tr.companyRow").removeClass("hide");
+                processFilters();
+            });
+            $("#textFilter").on("keyup",
+                function () {
+                    $("tr.companyRow").removeClass("hide");
+                    processFilters();
+                });
+            function processFilters() {
+                //text
+                var val2 = $("#textFilter").val().toLowerCase();
+                if (val2 !== "") {
+                    $("td.filterText").filter(function () {
+                        return ($(this).text().toLowerCase().indexOf(val2) < 0) &&
+                            ($(this).next("td").text().toLowerCase().indexOf(val2) < 0 &&
+                                ($(this).next("td").next("td").text().toLowerCase().indexOf(val2) < 0));
+                    }).closest("tr").addClass("hide");
+                }
+
+                //active
+                if ($("#isActiveFilter").is(':checked')) {
+                    $("td.companyIsActiveDataCell").filter(function () { return $(this).attr("data-value") === "False" })
+                        .closest("tr").addClass("hide");
+                }
+            }
+        });
+    </script>
+}

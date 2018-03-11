@@ -40,7 +40,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         {
             if (User.IsInRole("Administrator"))
             {
-                return RedirectToAction("Index", "AdministratorDashboard");
+                return RedirectToAction("ManageUsers", "Admin");
             }
             if (User.IsInRole("Student"))
             {
