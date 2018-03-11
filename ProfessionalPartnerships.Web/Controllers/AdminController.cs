@@ -13,8 +13,7 @@ using ProfessionalPartnerships.Web.Models;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
-
-    [Route("[controller]/[action]")]
+    
     public class AdminController : BaseController
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -25,11 +24,38 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ManageUsers()
+        public IActionResult ManageUsers()
         {
+            var users = new List<UsersViewModel>();
+            users.AddRange(_db.Administrators.Select(p => new UsersViewModel
+            {
+                Name = p.FirstName + " " + p.LastName,
+                UserId = p.AdminId,
+                Email = p.EmailAddress,
+                RoleName = "Administrator",
+                IsActive = p.IsActive
+            }));
+            users.AddRange(_db.Professionals.Select(p => new UsersViewModel
+            {
+                Name = p.FirstName + " " + p.LastName,
+                UserId = p.ProfessionalId,
+                Email = p.EmailAddress,
+                RoleName = "Professional",
+                IsActive = p.IsActive
+            }));
+            users.AddRange(_db.Students.Select(p => new UsersViewModel
+            {
+                Name = p.FirstName + " " + p.LastName,
+                UserId = p.StudentId,
+                Email = p.EmailAddress,
+                RoleName = "Student",
+                IsActive = p.IsActive
+            }));
+
             ViewData.Model = new ManageUsersViewModel
             {
-                Companies = _db.Companies.ToList()
+                Companies = _db.Companies.ToList(),
+                Users = users
             };
             return View();
         }
@@ -68,7 +94,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditProgram(string id)
+        public IActionResult EditProgram(string id)
         {
             var program = _db.Programs.Find(int.Parse(id));
             var vm = new ProgramsViewModel();
@@ -130,7 +156,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 });
                 await _db.SaveChangesAsync();
                 model.ActionWasSuccessful = true;
-                return View(model);
+                return View("Programs");
             }
             return View(model);
         }
@@ -163,193 +189,190 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> SearchUsers()
-        {
-            SearchUserViewModel model = new SearchUserViewModel();
-            model.AllUsers = new List<UsersViewModel>();
-            model.Roles = new List<SelectListItem>();
-            model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
-            model.Roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
-            model.Roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
-            return View(model);
-        }
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> SearchUsers(SearchUserViewModel SelectedRole)
+        //{
+        //    SearchUserViewModel model = new SearchUserViewModel();
+        //    model.AllUsers = new List<UsersViewModel>();
+        //    if (ModelState.IsValid)
+        //    {
+        //        switch (SelectedRole.SelectRole)
+        //        {
+        //            case "Administrator":
+        //                var AdminList = _db.Administrators.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+        //                if(AdminList!=null && AdminList.Count>0)
+        //                {
+        //                    foreach(var admin in AdminList)
+        //                    {
+        //                        UsersViewModel newUser = new UsersViewModel();
+        //                        newUser.UserName = (admin.FirstName +" "+ admin.LastName).ToString();
+        //                        newUser.UserID = admin.AdminId;
+        //                        newUser.Email = admin.EmailAddress;
+        //                        newUser.RoleName = SelectedRole.SelectRole;
+        //                        newUser.IsActive = admin.IsActive;
+        //                        model.AllUsers.Add(newUser);
+        //                    }
 
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<IActionResult> SearchUsers(SearchUserViewModel SelectedRole)
+        //                }
+        //                else
+        //                {
+        //                    ViewData["Message"] = "No Users found for Selected Role";
+        //                }
+        //                break;
+        //            case "Professional":
+        //                var UserList = _db.Professionals.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+        //                if (UserList != null && UserList.Count > 0)
+        //                {
+        //                    foreach (var users in UserList)
+        //                    {
+        //                        UsersViewModel newUser = new UsersViewModel();
+        //                        newUser.UserName = (users.FirstName + " " +users.LastName).ToString();
+        //                        newUser.UserID = users.ProfessionalId;
+        //                        newUser.Email = users.EmailAddress;
+        //                        newUser.RoleName = SelectedRole.SelectRole;
+        //                        newUser.IsActive = users.IsActive;
+        //                        model.AllUsers.Add(newUser);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    ViewData["Message"] = "No Users found for Selected Role";
+        //                }
+        //                break;
+        //            case "Student":
+        //                var StudentList = _db.Students.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+        //                if( StudentList!=null && StudentList.Count>0)
+        //                {
+        //                    foreach(var student in StudentList)
+        //                    {
+        //                        UsersViewModel newUser = new UsersViewModel();
+        //                        newUser.UserName = (student.FirstName +" " +student.LastName).ToString();
+        //                        newUser.UserID = student.StudentId;
+        //                        newUser.Email = student.EmailAddress;
+        //                        newUser.RoleName = SelectedRole.SelectRole;
+        //                       newUser.IsActive = student.IsActive;
+        //                        model.AllUsers.Add(newUser);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    ViewData["Message"] = "No Users found for Selected Role";
+        //                }
+        //                break;
+
+        //                default:
+        //                break;
+        //        }              
+        //    }
+        //    model.Roles = new List<SelectListItem>();
+        //    model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
+        //    model.Roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
+        //    model.Roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
+        //    model.SelectRole = SelectedRole.SelectRole;
+        //    return View(model);
+        //}
+
+        public IActionResult EditAdministrator(int id)
         {
-            SearchUserViewModel model = new SearchUserViewModel();
-            model.AllUsers = new List<UsersViewModel>();
-            if (ModelState.IsValid)
+            UsersViewModel user = null;
+            var admin = _db.Administrators.FirstOrDefault(x => x.AdminId == id);
+            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            if (admin != null)
             {
-                switch (SelectedRole.SelectRole)
+                user = new UsersViewModel
                 {
-                    case "Administrator":
-                        var AdminList = _db.Administrators.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
-                        if(AdminList!=null && AdminList.Count>0)
-                        {
-                            foreach(var admin in AdminList)
-                            {
-                                UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (admin.FirstName +" "+ admin.LastName).ToString();
-                                newUser.UserID = admin.AdminId;
-                                newUser.Email = admin.EmailAddress;
-                                newUser.RoleName = SelectedRole.SelectRole;
-                                newUser.IsActive = admin.IsActive;
-                                model.AllUsers.Add(newUser);
-                            }
-                           
-                        }
-                        else
-                        {
-                            ViewData["Message"] = "No Users found for Selected Role";
-                        }
-                        break;
-                    case "Professional":
-                        var UserList = _db.Professionals.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
-                        if (UserList != null && UserList.Count > 0)
-                        {
-                            foreach (var users in UserList)
-                            {
-                                UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (users.FirstName + " " +users.LastName).ToString();
-                                newUser.UserID = users.ProfessionalId;
-                                newUser.Email = users.EmailAddress;
-                                newUser.RoleName = SelectedRole.SelectRole;
-                                newUser.IsActive = users.IsActive;
-                                model.AllUsers.Add(newUser);
-                            }
-                        }
-                        else
-                        {
-                            ViewData["Message"] = "No Users found for Selected Role";
-                        }
-                        break;
-                    case "Student":
-                        var StudentList = _db.Students.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
-                        if( StudentList!=null && StudentList.Count>0)
-                        {
-                            foreach(var student in StudentList)
-                            {
-                                UsersViewModel newUser = new UsersViewModel();
-                                newUser.UserName = (student.FirstName +" " +student.LastName).ToString();
-                                newUser.UserID = student.StudentId;
-                                newUser.Email = student.EmailAddress;
-                                newUser.RoleName = SelectedRole.SelectRole;
-                               newUser.IsActive = student.IsActive;
-                                model.AllUsers.Add(newUser);
-                            }
-                        }
-                        else
-                        {
-                            ViewData["Message"] = "No Users found for Selected Role";
-                        }
-                        break;
-
-                        default:
-                        break;
-                }              
+                    FirstName = admin.FirstName,
+                    LastName = admin.LastName,
+                    Email = admin.EmailAddress,
+                    IsActive = admin.IsActive,
+                    UserId = id,
+                    RoleName = "Administrator",
+                    Roles = roles
+                };
             }
-            model.Roles = new List<SelectListItem>();
-            model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
-            model.Roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
-            model.Roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
-            model.SelectRole = SelectedRole.SelectRole;
-            return View(model);
+            else
+            {
+                ViewData["Message"] = "No Users found for Selected UserID";
+            }
+            return View("EditUser", user);
         }
 
-        [HttpGet("{UserId?}/{RoleName?}")]
-        public async Task<IActionResult> EditUser(int UserId,string RoleName)
+        public IActionResult EditProfessional(int id)
         {
-            UsersViewModel newUser = null;
-            switch (RoleName)
+            UsersViewModel user = null;
+            var admin = _db.Professionals.FirstOrDefault(x => x.ProfessionalId == id);
+            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            if (admin != null)
             {
-                case "Administrator":
-                    var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
-                    if (AdminData != null)
-                    {
-                       
-                        newUser = new UsersViewModel();
-                        newUser.FirstName = AdminData.FirstName;
-                        newUser.LastName = AdminData.LastName;
-                        newUser.Email = AdminData.EmailAddress;
-                        newUser.IsActive = AdminData.IsActive;
-                        newUser.UserID = UserId;                           
-                        newUser.RoleName = RoleName;
-                         
-                    }
-                    else
-                    {
-                        ViewData["Message"] = "No Users found for Selected UserID";
-                    }
-                    break;
-                case "Professional":
-                    var UserData = _db.Professionals.Where(x => x.ProfessionalId == UserId).FirstOrDefault();
-                    if (UserData != null)
-                    {
-                        newUser = new UsersViewModel();
-                        newUser.FirstName = UserData.FirstName;
-                        newUser.LastName = UserData.LastName;
-                        newUser.Email = UserData.EmailAddress;
-                        newUser.IsActive = UserData.IsActive;
-                        newUser.UserID = UserId;
-                        newUser.RoleName = RoleName;
-                    }
-                    else
-                    {
-                        ViewData["Message"] = "No Users found for Selected Role";
-                    }
-                    break;
-                case "Student":
-                    var StudentData = _db.Students.Where(x => x.StudentId == UserId).FirstOrDefault();
-                    if (StudentData != null)
-                    {
-                        newUser = new UsersViewModel();
-                        newUser.FirstName = StudentData.FirstName;
-                        newUser.LastName = StudentData.LastName;
-                        newUser.Email = StudentData.EmailAddress;
-                        newUser.IsActive = StudentData.IsActive;
-                        newUser.UserID = UserId;
-                        newUser.RoleName = RoleName;
-                    }
-                    else
-                    {
-                        ViewData["Message"] = "No Users found for Selected Role";
-                    }
-                    break;
-
-                default:
-                    break;
+                user = new UsersViewModel
+                {
+                    FirstName = admin.FirstName,
+                    LastName = admin.LastName,
+                    Email = admin.EmailAddress,
+                    IsActive = admin.IsActive,
+                    UserId = id,
+                    RoleName = "Professional",
+                    Roles = roles
+                };
             }
-            return View(newUser);
+            else
+            {
+                ViewData["Message"] = "No Users found for Selected UserID";
+            }
+            return View("EditUser", user);
+        }
+        public IActionResult EditStudent(int id)
+        {
+            UsersViewModel user = null;
+            var roles = new List<string> {"Administrator", "Professional", "Student"};
+            var admin = _db.Students.FirstOrDefault(x => x.StudentId == id);
+            if (admin != null)
+            {
+                user = new UsersViewModel
+                {
+                    FirstName = admin.FirstName,
+                    LastName = admin.LastName,
+                    Email = admin.EmailAddress,
+                    IsActive = admin.IsActive,
+                    UserId = id,
+                    RoleName = "Student",
+                    Roles = roles
+                };
+            }
+            else
+            {
+                ViewData["Message"] = "No Users found for Selected UserID";
+            }
+            return View("EditUser", user);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateUser(UsersViewModel usersViewModel)
+        public IActionResult UpdateUser(UpdateUserViewModel user)
         {
-            if(ModelState.IsValid)
+            var success = false;
+            if (user.OriginalRoleName != user.RoleName)
             {
-
-                switch (usersViewModel.RoleName)
+                //Do work to remove record from old role and create in new role
+                ViewData["Message"] = "Input is not valid";
+            }
+            else
+            {
+                //Save user properties
+                switch (user.RoleName)
                 {
                     case "Administrator":
-                       // var AdminData = _db.Administrators.Where(x => x.AdminId == UserId).FirstOrDefault();
-                        if (usersViewModel != null)
+                        var administrator = _db.Administrators.FirstOrDefault(x => x.AdminId == user.UserId);
+                        if (administrator != null)
                         {
-                            var administrator = _db.Administrators.SingleOrDefault(x => x.AdminId == usersViewModel.UserID);
-                            if(administrator!=null)
-                            {
-                                administrator.FirstName = usersViewModel.FirstName;
-                                administrator.LastName = usersViewModel.LastName;
-                                administrator.EmailAddress = usersViewModel.Email;
-                                administrator.IsActive = usersViewModel.IsActive;
-                                _db.SaveChanges();
-                                ViewData["Message"] = "Administrator Record Updated Successfully";
-                            }                           
-
+                            administrator.FirstName = user.FirstName;
+                            administrator.LastName = user.LastName;
+                            administrator.EmailAddress = user.Email;
+                            administrator.IsActive = user.IsActive;
+                            _db.SaveChanges();
+                            ViewData["Message"] = "Administrator Record Updated Successfully";
+                            success = true;
                         }
                         else
                         {
@@ -357,19 +380,20 @@ namespace ProfessionalPartnerships.Web.Controllers
                         }
                         break;
                     case "Professional":
-                        if (usersViewModel != null)
+                        var pro = _db.Professionals.FirstOrDefault(x => x.ProfessionalId == user.UserId);
+                        if (pro != null)
                         {
-                            var professional = _db.Professionals.SingleOrDefault(x => x.ProfessionalId == usersViewModel.UserID);
+                            var professional = _db.Professionals.SingleOrDefault(x => x.ProfessionalId == user.UserId);
                             if (professional != null)
                             {
-                                professional.FirstName = usersViewModel.FirstName;
-                                professional.LastName = usersViewModel.LastName;
-                                professional.EmailAddress = usersViewModel.Email;
-                                professional.IsActive = usersViewModel.IsActive;
+                                professional.FirstName = user.FirstName;
+                                professional.LastName = user.LastName;
+                                professional.EmailAddress = user.Email;
+                                professional.IsActive = user.IsActive;
                                 _db.SaveChanges();
                                 ViewData["Message"] = "Professional Record Updated Successfully";
+                                success = true;
                             }
-                            
                         }
                         else
                         {
@@ -377,32 +401,43 @@ namespace ProfessionalPartnerships.Web.Controllers
                         }
                         break;
                     case "Student":
-                        if (usersViewModel != null)
+                        var student = _db.Students.FirstOrDefault(x => x.StudentId == user.UserId);
+                        if (student != null)
                         {
-                            var student = _db.Students.SingleOrDefault(x => x.StudentId == usersViewModel.UserID);
-                            if (student != null)
-                            {
-                                student.FirstName = usersViewModel.FirstName;
-                                student.LastName = usersViewModel.LastName;
-                                student.EmailAddress = usersViewModel.Email;
-                                student.IsActive = usersViewModel.IsActive;
-                                _db.SaveChanges();
-                                ViewData["Message"] = "Student Record Updated Successfully";
-                            }
-
+                            student.FirstName = user.FirstName;
+                            student.LastName = user.LastName;
+                            student.EmailAddress = user.Email;
+                            student.IsActive = user.IsActive;
+                            _db.SaveChanges();
+                            ViewData["Message"] = "Student Record Updated Successfully";
+                            success = true;
                         }
                         else
                         {
                             ViewData["Message"] = "Input is not valid";
                         }
                         break;
-
-                    default:
-                        break;
                 }
-
             }
-            return View("EditUser", usersViewModel);
+            if (success)
+            {
+                return RedirectToAction("ManageUsers");
+            }
+
+            var roles = new List<string> { "Administrator", "Professional", "Student" };
+
+            var editUser = new UsersViewModel
+            {
+                Roles = roles,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                UserId = user.UserId,
+                RoleName = user.OriginalRoleName,
+                ErrorMessage = ViewData["Message"].ToString()
+            };
+            return View("EditUser", editUser);
         }
     }
 }

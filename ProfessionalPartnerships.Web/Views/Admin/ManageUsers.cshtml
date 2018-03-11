@@ -4,66 +4,102 @@
     ViewBag.Title = "Manage Users";
     Layout = "_Layout";
 }
-<h2>@ViewBag.Title</h2>
-<div class="row" id="ManageUserFilter">
-    <div class="col-lg-3 col-md-3 col-sm-3">1</div>
-    <div class="col-lg-3 col-md-3 col-sm-3">2</div>
-    <div class="col-lg-3 col-md-3 col-sm-3">3</div>
-    <div class="col-lg-3 col-md-3 col-sm-3">
-        <div class="btn-group">
-            <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
-                <span class="glyphicon glyphicon-plus"></span> Invite User
-            </button>
-        </div>
-    </div>
-
-    <div class="modal fade" id="invite" role="dialog">
-        <div class="modal-dialog modal-md">
-            <!-- Modal content no 1-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title text-center">Create Invitation</h4>
-                </div>
-                <div class="modal-body">
-                    <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal" id="invitationForm">
-                        <div class="input-group top-buffer">
-                            <input type="email" data-error="Bruh, that email address is invalid" required class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2" name="emailAddress">
-                            <span class="input-group-addon" id="basic-addon2">@@gmail.com</span>
-                        </div>
-                        <div class="input-group top-buffer">
-                            <label class="radio-inline"><input type="radio" id="createAdministrator" value="Administrator" required name="role">Administrator</label>
-                            <label class="radio-inline"><input type="radio" id="createProfessional" value="Professional" required name="role">Professional</label>
-                            <label class="radio-inline"><input type="radio" id="createStudent" value="Student" required name="role">Student</label>
-                        </div>
-                        <div class="input-group top-buffer hide" id="companySelectorContainer">
-                            <select class="form-control" id="inviteCompany" type="number" name="companyId">
-                                <option value="">Choose a Company</option>
-                                @foreach (var company in Model.Companies)
-                                {
-                                    <option value="@company.CompanyId">@company.Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="input-group top-buffer">
-                            <div class="btn-group">
-                                <button type="submit" class="btn btn-primary">
-                                    <span class="glyphicon glyphicon-us"></span> Submit
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+<div class="panel panel-default top-buffer">
+    <div class="panel-heading">Manage Users</div>
+    <div class="panel-body">
+        <div class="row" id="ManageUserFilter">
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                Roles Filter
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3">Name/Email Filter</div>
+            <div class="col-lg-3 col-md-3 col-sm-3">Is Active Filter</div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="btn-group bottom-buffer">
+                    <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
+                        <span class="glyphicon glyphicon-plus"></span> Invite User
+                    </button>
                 </div>
             </div>
 
+            <div class="modal fade" id="invite" role="dialog">
+                <div class="modal-dialog modal-md">
+                    <!-- Modal content no 1-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title text-center">Create Invitation</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form asp-controller="Account" asp-action="InviteUser" method="post" class="form-horizontal" id="invitationForm">
+                                <div class="input-group top-buffer">
+                                    <input type="email" data-error="Bruh, that email address is invalid" required class="form-control" placeholder="User's Email Address'" aria-describedby="basic-addon2" name="emailAddress">
+                                    <span class="input-group-addon" id="basic-addon2">@@gmail.com</span>
+                                </div>
+                                <div class="input-group top-buffer">
+                                    <label class="radio-inline"><input type="radio" id="createAdministrator" value="Administrator" required name="role">Administrator</label>
+                                    <label class="radio-inline"><input type="radio" id="createProfessional" value="Professional" required name="role">Professional</label>
+                                    <label class="radio-inline"><input type="radio" id="createStudent" value="Student" required name="role">Student</label>
+                                </div>
+                                <div class="input-group top-buffer hide" id="companySelectorContainer">
+                                    <select class="form-control" id="inviteCompany" type="number" name="companyId">
+                                        <option value="">Choose a Company</option>
+                                        @foreach (var company in Model.Companies)
+                                        {
+                                            <option value="@company.CompanyId">@company.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="input-group top-buffer">
+                                    <div class="btn-group">
+                                        <button type="submit" class="btn btn-primary">
+                                            <span class="glyphicon glyphicon-us"></span> Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <table class="table">
+                <tr>
+                    <th>Role</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Is Active</th>
+                    <th>Edit</th>
+                </tr>
+
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.RoleName</td>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>
+                            @if (user.IsActive)
+                            {
+                                <span class="glyphicon glyphicon-thumbs-up"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-thumbs-down"></span>
+                            }
+                        </td>
+                        <td><a href="@("Edit" + user.RoleName)/@user.UserId"><button class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Edit</button></a></td>
+                    </tr>
+                }
+            </table>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            $('input[type="radio"]').click(function() {
+        $(document).ready(function () {
+            $('input[type="radio"]').click(function () {
                 if ($(this).attr('id') === 'createProfessional') {
                     $('#companySelectorContainer').removeClass("hide");
                     $('#inviteCompany').prop('required', true);
@@ -73,23 +109,6 @@
                 }
                 $("#invitationForm").validator("update");
             });
-            //$("#invitationForm").validate({
-            //    rules: {
-            //        emailAddress: {
-            //            required: true,
-            //            email: true
-            //        },
-            //        role: {
-            //            required: true
-            //        }
-            //    },
-            //    messages: {
-            //        emailAddress: {
-            //            required: "Please provide an email address for the new user.",
-            //            email: "The email address you provided is not valid"
-            //        }
-            //    }
-            //});
         });
     </script>
 }
