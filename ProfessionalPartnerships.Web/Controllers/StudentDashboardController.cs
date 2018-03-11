@@ -50,7 +50,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
 
             //for testing
-            userId = "8a94b129-c319-4f8c-8cfe-9f07e8a44ae1";
+            //userId = "8a94b129-c319-4f8c-8cfe-9f07e8a44ae1";
             if (userId != null)
             {
                 var myStudent = Database.Students.Where(x => x.AspNetUserId == userId).FirstOrDefault();
@@ -63,7 +63,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         //probably should move to a service or repository
-        private IEnumerable<StudentDashboardViewModel> FindPrograms(string keyword)
+        private IEnumerable<StudentDashboardViewModel> AllPrograms()
         {
             int studentId = GetCurrentStudentId();
 
@@ -83,7 +83,11 @@ namespace ProfessionalPartnerships.Web.Controllers
                 EnrolledCount = g.Count(x => x.EnrollmentStatus.IsDisregardedInEnrollmentCount == false)
             });
 
-            var rows = Database.Programs.Include(p => p.ProgramType).GroupJoin(enrollmentTotals,
+            var rows = Database.Programs
+                .Include(p => p.ProgramType)
+                .Include(p=> p.Semester)
+                .Where(p=>p.IsActive)
+                .GroupJoin(enrollmentTotals,
                     p => p.ProgramId,
                     e => e.ProgramId, (p, e) => new { Program = p, Enrollments = e }).SelectMany(
                     e => e.Enrollments.Select(x => x.EnrolledCount).DefaultIfEmpty(),
@@ -94,7 +98,8 @@ namespace ProfessionalPartnerships.Web.Controllers
                     programTypeName = p.Program.ProgramType.Name,
                     programId = p.Program.ProgramId,
                     enrolledCount = ct,
-                    enrollmentStatus = myEnrollments.ContainsKey(p.Program.ProgramId) ? myEnrollments[p.Program.ProgramId] : ""
+                    enrollmentStatus = myEnrollments.ContainsKey(p.Program.ProgramId) ? myEnrollments[p.Program.ProgramId] : "",
+                    semesterName = p.Program.Semester.Name
                 });
 
             /*
@@ -108,18 +113,14 @@ namespace ProfessionalPartnerships.Web.Controllers
                 });
             */
 
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                rows = rows.Where(x => x.description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
+            
             return rows;
         }
 
         [HttpPost]
-        public JsonResult GetPrograms(string keyword)
+        public JsonResult GetPrograms()
         {
-            return Json(FindPrograms(keyword));
+            return Json(AllPrograms());
         }
 
         [HttpPost]
@@ -142,7 +143,7 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             Database.SaveChanges();
 
-            var result = FindPrograms(null).Where(x => x.programId == programId).FirstOrDefault();
+            var result = AllPrograms().Where(x => x.programId == programId).FirstOrDefault();
 
             return Json(result);
         }

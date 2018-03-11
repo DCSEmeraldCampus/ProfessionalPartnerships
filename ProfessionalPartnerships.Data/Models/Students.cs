@@ -16,7 +16,8 @@ namespace ProfessionalPartnerships.Data.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string AspNetUserId { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; }
+        public string EmailAddress { get; set; }
 
         public ICollection<Enrollments> Enrollments { get; set; }
         public ICollection<StudentInterests> StudentInterests { get; set; }

@@ -398,6 +398,9 @@ namespace ProfessionalPartnerships.Data.Models
 
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
+                entity.Property(e => e.EmailAddress).IsRequired()
+                    .HasMaxLength(250);
+
                 entity.Property(e => e.LastName)
                     .IsRequired()
                     .HasMaxLength(50)
