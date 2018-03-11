@@ -9,5 +9,6 @@ namespace ProfessionalPartnerships.Web.Models.ProfessionalViewModels
         public Programs Program { get; set; }
         public IEnumerable<Semesters> Semesters { get; set; }
         public IEnumerable<ProgramTypes> ProgramTypes { get; set; }
+        public Companies Company { get; set; }
     }
 }
