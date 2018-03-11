@@ -260,6 +260,12 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
+        [HttpGet("{UserId?}/{RoleName?}")]
+        public async Task<IActionResult> EditUser(int UserId,string RoleName)
+        {
+           
+            return View();
+        }
 
     }
 }

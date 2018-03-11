@@ -1,0 +1,52 @@
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Enrollments.EnrollmentsViewModel
+
+<link href="~/css/font-awesome.min.css" rel="stylesheet" />
+
+@{
+    ViewData["Title"] = $"Editing Enrollment #{Model.EnrollmentId}";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+	<form asp-action="Save">
+		<div class="col-md-4">
+			<section>
+				<h4>Enrollment Details</h4>
+
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<input type="hidden" asp-for="EnrollmentId"/>
+
+				<div class="form-group">
+					<label asp-for="StudentId" class="control-label"></label>
+					@Html.DropDownListFor(x => x.StudentId, Model.Students, "-- Please Select a Student --", new {@class = "form-control"})
+					<span asp-validation-for="StudentId" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="EnrollmentStatusId" class="control-label"></label>
+					@Html.DropDownListFor(x => x.EnrollmentStatusId, Model.EnrollmentStatuses, "-- Please Select an Enrollment Status --", new {@class = "form-control"})
+					<span asp-validation-for="EnrollmentStatusId" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="ProgramId" class="control-label"></label>
+					@Html.DropDownListFor(x => x.ProgramId, Model.Programs, "-- Please Select a Program --", new {@class = "form-control"})
+					<span asp-validation-for="ProgramId" class="text-danger"></span>
+				</div>
+
+				<div class="form-group">
+					<label asp-for="Notes" class="control-label"></label>
+					<textarea rows="5" asp-for="Notes" class="form-control"> </textarea>
+				</div>
+
+				<div class="form-group">
+					<button type="submit" class="btn btn-success">
+						<i class="fa fa-save"></i>
+						Save
+					</button>
+				</div>
+			</section>
+		</div>
+	</form>
+</div>

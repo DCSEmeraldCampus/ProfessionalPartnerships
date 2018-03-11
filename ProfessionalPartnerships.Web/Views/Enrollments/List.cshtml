@@ -1,13 +1,24 @@
 ﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Enrollments.EnrollmentsListViewModel
 
+<link href="~/css/font-awesome.min.css" rel="stylesheet" />
+
 @{
 	ViewBag.Title = "Manage Enrollments";
 	Layout = "_Layout";
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="clearfix">
+	<div>
+		<h2>@ViewData["Title"]</h2>
+	</div>
 
-<br />
+	<div class="form-group" style="float: right;">
+		<a href="@Url.Action("Edit", "Enrollments")" class="btn btn-success">
+			<i class="fa fa-plus"></i>
+			Add New
+		</a>
+	</div>
+</div>
 
 <div class="table-responsive">
 	<table class="table table-hover">
@@ -15,6 +26,7 @@
 			<tr>
 				<th scope="col">ID #</th>
 				<th scope="col">Student Name</th>
+				<th scope="col">Semester</th>
 				<th scope="col">Program Name</th>
 				<th scope="col">Current Status</th>
 				<th scope="col"></th>
@@ -25,7 +37,7 @@
 			@if (!Model.Any())
 			{
 				<tr>
-					<td colspan="4"><em>There are currently no enrollments in the system.</em></td>
+					<td colspan="6"><em>There are currently no enrollments in the system.</em></td>
 				</tr>
 			}
 			@foreach (var enrollment in Model.OrderBy(e => e.EnrollmentStatusId).ThenBy(e => e.StudentName))
@@ -36,68 +48,26 @@
 						@enrollment.StudentName
 					</td>
 					<td>
+						@enrollment.Semester
+					</td>
+					<td>
 						@enrollment.ProgramName
 					</td>
 					<td>
 						@enrollment.EnrollmentStatusName
 					</td>
 					<td>
-						@if (enrollment.EnrollmentStatusId == 1)
-						{
-							<text>
-								<a href="#" class="jq-approve-applicant" data-enrollment-id="@enrollment.EnrollmentId">Approve</a>
-								<br/>
-								<a href="#" class="jq-decline-applicant" data-enrollment-id="@enrollment.EnrollmentId">Decline</a>
-							</text>
-						}
-
-						@if (enrollment.EnrollmentStatusId == 2)
-						{
-							<a href="#" class="jq-decline-applicant" data-enrollment-id="@enrollment.EnrollmentId">Decline</a>
-						}
-	
-						@if (enrollment.EnrollmentStatusId == 3 )
-						{
-							<a href="#" class="jq-approve-applicant" data-enrollment-id="@enrollment.EnrollmentId">Approve</a>
-						}
+						<a class="btn btn-primary" href="@Url.Action("Edit", "Enrollments", new { enrollmentId = enrollment.EnrollmentId})">
+							<i class="fa fa-edit"></i>
+							Edit
+						</a>
+						<a class="btn btn-danger" href="@Url.Action("Delete", "Enrollments", new { enrollmentId = enrollment.EnrollmentId})">
+							<i class="fa fa-trash"></i>
+							Delete
+						</a>
 					</td>
 				</tr>
 			}
 		</tbody>
 	</table>
 </div>
-
-@section Scripts {
-	<script type="text/javascript">
-		$(function() {
-			var updateEnrollmentStatus = function(el, newStatusId) {
-				const enrollmentId = el.data("enrollment-id");
-
-				const xhr = $.post(
-					'@Url.Action("UpdateEnrollmentStatus")',
-					{ enrollmentId: enrollmentId, newStatusId: newStatusId }
-				);
-
-				xhr.done(function(data) {
-					window.location.reload();
-				});
-
-				xhr.fail(function(data) {
-					alert(data);
-				});
-			}
-
-			$(".jq-approve-applicant").click(function(e) {
-				e.preventDefault();
-
-				updateEnrollmentStatus($(this), 2);
-			});
-
-			$(".jq-decline-applicant").click(function(e) {
-				e.preventDefault();
-
-				updateEnrollmentStatus($(this), 3);
-			});
-		});
-	</script>
-}

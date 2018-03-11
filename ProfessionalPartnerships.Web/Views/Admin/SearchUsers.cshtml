@@ -30,21 +30,25 @@
     <div>
         <table class="table table-bordered" >
             <tr class="row">
-                <th scope="col">UserID</th>
+
                 <th scope="col">UserName</th>
                 <th scope="col">Email Address</th>
                 <th scope="col">IsActive</th>
+                <th scope="col">Edit</th>
             </tr>
 
             @foreach (var User in Model.AllUsers)
             {
-                <tr class="row">
-                    <td>@User.UserID</td>
-                    <td>@User.UserName</td>
-                    <td>@User.Email</td>
-                    <td>@User.IsActive</td>
-                    @Html.Hidden("HRoleName",@User.RoleName)
-                </tr>
+            <tr class="row">
+
+
+                <td>@User.UserName</td>
+                <td>@User.Email</td>
+                <td>@User.IsActive</td>
+                <td>@Html.ActionLink("Edit", "EditUser", "Admin", new { userId = @User.UserID, rolename = @User.RoleName }, null)</td>
+                @*@Html.Hidden("HRoleName", @User.RoleName)*@
+                
+            </tr>
             }
 
         </table>
