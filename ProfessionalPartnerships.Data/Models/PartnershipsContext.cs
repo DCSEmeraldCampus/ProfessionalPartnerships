@@ -6,6 +6,7 @@ namespace ProfessionalPartnerships.Data.Models
 {
     public partial class PartnershipsContext : DbContext
     {
+        public virtual DbSet<Administrators> Administrators { get; set; }        
         public virtual DbSet<Certifications> Certifications { get; set; }
         public virtual DbSet<CertificationTypes> CertificationTypes { get; set; }
         public virtual DbSet<Companies> Companies { get; set; }
@@ -13,6 +14,7 @@ namespace ProfessionalPartnerships.Data.Models
         public virtual DbSet<Enrollments> Enrollments { get; set; }
         public virtual DbSet<EnrollmentStatuses> EnrollmentStatuses { get; set; }
         public virtual DbSet<Interests> Interests { get; set; }
+        public virtual DbSet<Invitations> Invitations { get; set; }
         public virtual DbSet<ProfessionalReviews> ProfessionalReviews { get; set; }
         public virtual DbSet<Professionals> Professionals { get; set; }
         public virtual DbSet<ProfessionalSkills> ProfessionalSkills { get; set; }
@@ -29,11 +31,39 @@ namespace ProfessionalPartnerships.Data.Models
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        {           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Administrators>(entity =>
+            {
+                entity.HasKey(e => e.AdminId);
+
+                entity.Property(e => e.AspNetUserId)
+                    .IsRequired()
+                    .HasMaxLength(450);
+
+                entity.Property(e => e.EmailAddress)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Phone)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);                
+            });            
+
             modelBuilder.Entity<Certifications>(entity =>
             {
                 entity.HasKey(e => e.CertificationId);
@@ -74,8 +104,7 @@ namespace ProfessionalPartnerships.Data.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Address2)
-                    .IsRequired()
+                entity.Property(e => e.Address2)                    
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
@@ -111,12 +140,9 @@ namespace ProfessionalPartnerships.Data.Models
 
                 entity.Property(e => e.Key)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
 
-                entity.Property(e => e.Value)
-                    .IsRequired()
-                    .IsUnicode(false);
+                entity.Property(e => e.Value).IsRequired();
             });
 
             modelBuilder.Entity<Enrollments>(entity =>
@@ -168,6 +194,26 @@ namespace ProfessionalPartnerships.Data.Models
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Invitations>(entity =>
+            {
+                entity.HasKey(e => e.InvitationId);
+
+                entity.Property(e => e.EmailAddress)
+                    .IsRequired()
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Company)
+                    .WithMany(p => p.Invitations)
+                    .HasForeignKey(d => d.CompanyId)
+                    .HasConstraintName("FK_Invitations_Companies");
+            });
+
             modelBuilder.Entity<ProfessionalReviews>(entity =>
             {
                 entity.HasKey(e => e.ProfessionalReviewId);
@@ -213,9 +259,9 @@ namespace ProfessionalPartnerships.Data.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.AspNetUserId)
-                      .IsRequired()
-                      .HasMaxLength(450)
-                      .IsUnicode(true);
+                     .IsRequired()
+                     .HasMaxLength(450)
+                     .IsUnicode(true);
 
                 entity.HasOne(d => d.Company)
                     .WithMany(p => p.Professionals)
@@ -343,10 +389,14 @@ namespace ProfessionalPartnerships.Data.Models
             {
                 entity.HasKey(e => e.StudentId);
 
+                entity.Property(e => e.AspNetUserId).HasMaxLength(450);
+
                 entity.Property(e => e.FirstName)
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
