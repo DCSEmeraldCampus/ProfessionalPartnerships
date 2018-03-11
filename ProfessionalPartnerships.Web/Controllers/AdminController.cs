@@ -236,9 +236,9 @@ namespace ProfessionalPartnerships.Web.Controllers
                                 UsersViewModel newUser = new UsersViewModel();
                                 newUser.UserName = (student.FirstName +" " +student.LastName).ToString();
                                 newUser.UserID = student.StudentId;
-                               // newUser.Email = student.EmailId;
+                                newUser.Email = student.EmailAddress;
                                 newUser.RoleName = SelectedRole.SelectRole;
-                               // newUser.IsActive = student.IsActive;
+                               newUser.IsActive = student.IsActive;
                                 model.AllUsers.Add(newUser);
                             }
                         }
