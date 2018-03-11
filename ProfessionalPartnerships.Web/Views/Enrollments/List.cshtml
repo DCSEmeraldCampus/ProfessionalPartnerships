@@ -11,8 +11,10 @@
 	<div>
 		<h2>@ViewData["Title"]</h2>
 	</div>
+	
+	<br/>
 
-	<div class="form-group" style="float: right;">
+	<div class="form-group">
 		<a href="@Url.Action("Edit", "Enrollments")" class="btn btn-success">
 			<i class="fa fa-plus"></i>
 			Add New
@@ -20,11 +22,12 @@
 	</div>
 </div>
 
+<br/>
+
 <div class="table-responsive">
 	<table class="table table-hover">
 		<thead>
 			<tr>
-				<th scope="col">ID #</th>
 				<th scope="col">Student Name</th>
 				<th scope="col">Semester</th>
 				<th scope="col">Program Name</th>
@@ -37,16 +40,15 @@
 			@if (!Model.Any())
 			{
 				<tr>
-					<td colspan="6"><em>There are currently no enrollments in the system.</em></td>
+					<td colspan="5"><em>There are currently no enrollments in the system.</em></td>
 				</tr>
 			}
 			@foreach (var enrollment in Model.OrderBy(e => e.EnrollmentStatusId).ThenBy(e => e.StudentName))
 			{
 				<tr>
-					<th scope="row">@enrollment.EnrollmentId</th>
-					<td>
+					<th scope="row">
 						@enrollment.StudentName
-					</td>
+					</th>
 					<td>
 						@enrollment.Semester
 					</td>
