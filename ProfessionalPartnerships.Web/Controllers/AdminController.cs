@@ -179,27 +179,56 @@ namespace ProfessionalPartnerships.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProgram(ProgramsViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var program = _db.Programs.Find(model.ProgramId);
-                _db.Update(program);
+                if (ModelState.IsValid)
+                {
+                    // MDT 03-11-18, check that approved is less than maxcount
+                    var checkProgram = _db.Programs
+                        .Include(i => i.Enrollments).ThenInclude(i => i.EnrollmentStatus)
+                        .FirstOrDefault(fod => fod.ProgramId == model.ProgramId);
 
-                program.SemesterId = int.Parse(model.SelectedSemesterId);
-                program.ProgramTypeId = int.Parse(model.SelectedProgramTypeId);
-                program.PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId);
-                program.AvailabilityDate = model.AvailabilityDate;
-                program.StartDate = model.StartDate;
-                program.EndDate = model.EndDate;
-                program.IsActive = model.IsActive;
-                program.MaximumStudentCount = model.MaximumStudentCount;
-                program.Description = model.Description;
-                program.IsApproved = model.IsApproved;
+                    var approvedCount = checkProgram?.Enrollments.Count(c => !c.EnrollmentStatus.IsDisregardedInEnrollmentCount ?? false) ?? 0;
+                    var maxCount = model.MaximumStudentCount;
 
-                await _db.SaveChangesAsync();
-                model.ActionWasSuccessful = true;
+                    var maxLimitReached = approvedCount > maxCount;
+
+                    if (maxLimitReached)
+                    {
+                        // TODO MDT 03-11-18, this will prevent max limit from being exceeded (need to make it fail safer; ie: response message)
+                        throw new NotImplementedException("MaxLimitReached");
+                    }
+                    else
+                    {
+                        var program = _db.Programs.Find(model.ProgramId);
+                        _db.Update(program);
+
+                        program.SemesterId = int.Parse(model.SelectedSemesterId);
+                        program.ProgramTypeId = int.Parse(model.SelectedProgramTypeId);
+                        program.PointOfContactProfessionalId = ParseNullableInt(model.SelectedPointOfContactProfessionalId);
+                        program.AvailabilityDate = model.AvailabilityDate;
+                        program.StartDate = model.StartDate;
+                        program.EndDate = model.EndDate;
+                        program.IsActive = model.IsActive;
+                        program.MaximumStudentCount = model.MaximumStudentCount;
+                        program.Description = model.Description;
+                        program.IsApproved = model.IsApproved;
+
+                        await _db.SaveChangesAsync();
+
+                        model.ActionWasSuccessful = true;
+                        return View(model);
+                    }
+                }
+
+                // ModelState InValid
                 return View(model);
             }
-            return View(model);
+            catch(Exception ex)
+            {
+                // TODO MDT 03-11-18, need to return model to EditProgram screen; was getting error when 'return View(model)' within catch
+                return RedirectToAction("EditProgram", new { id = model.ProgramId });
+            }
         }
 
         [HttpPost]

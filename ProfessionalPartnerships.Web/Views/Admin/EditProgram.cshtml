@@ -97,7 +97,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>EnrollmentId</th>
+                                @*<th>EnrollmentId</th>*@
                                 <th>EnrollmentStatusName</th>
                                 <th>StudentName</th>
                                 <th>Notes</th>
@@ -108,7 +108,7 @@
                             @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Applied))
                             {
                                 <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    @*<td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>*@
                                     <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Notes)</td>
@@ -136,7 +136,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>EnrollmentId</th>
+                                @*<th>EnrollmentId</th>*@
                                 <th>EnrollmentStatusName</th>
                                 <th>StudentName</th>
                                 <th>Notes</th>
@@ -147,7 +147,7 @@
                             @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Approved))
                             {
                                 <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    @*<td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>*@
                                     <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Notes)</td>
@@ -169,7 +169,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>EnrollmentId</th>
+                                @*<th>EnrollmentId</th>*@
                                 <th>EnrollmentStatusName</th>
                                 <th>StudentName</th>
                                 <th>Notes</th>
@@ -180,7 +180,7 @@
                             @foreach (var item in Model.EnrollmentsViewModels.Where(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Declined))
                             {
                                 <tr>
-                                    <td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>
+                                    @*<td>@Html.DisplayFor(modelItem => item.EnrollmentId)</td>*@
                                     <td>@Html.DisplayFor(modelItem => item.EnrollmentStatusName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.StudentName)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Notes)</td>
