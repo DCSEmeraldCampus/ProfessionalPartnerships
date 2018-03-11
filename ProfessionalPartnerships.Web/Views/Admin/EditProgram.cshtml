@@ -186,7 +186,7 @@
                                     <td>@Html.DisplayFor(modelItem => item.Notes)</td>
                                     <td>
                                         <button id="approveEnrollment"
-                                                data-id="@item.EnrollmentId"
+                                                data-value="@item.EnrollmentId"
                                                 type="button"
                                                 class="btn btn-primary">
                                             Approve
@@ -216,24 +216,44 @@
 
         <script type="text/javascript">
             $("#approveEnrollment").click(function () {
-                alert("approveEnrollment; id: " + $(this).attr("data-value"));
-                //$.ajax({
-                //    type: "POST",
-                //    url: url,
-                //    data: data,
-                //    success: success,
-                //    dataType: dataType
-                //});
+                var id = $(this).attr("data-value");
+                alert("approveEnrollment; id: " + id);
+
+                var data = { id: id };
+                console.log(data)
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ApproveEnrollment", "Admin")',
+                    data: data,
+                    success: function (data) {
+                        console.log("Success");
+                        location.reload();
+                    },
+                    error: function (data) {
+                        console.log("Error");
+                    }
+                });
             });
             $("#declineEnrollment").click(function () {
+                var id = $(this).attr("data-value");
                 alert("declineEnrollment; id: " + $(this).attr("data-value"));
-                //$.ajax({
-                //    type: "POST",
-                //    url: url,
-                //    data: data,
-                //    success: success,
-                //    dataType: dataType
-                //});
+
+                var data = { id: id };
+                console.log(data)
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeclineEnrollment", "Admin")',
+                    data: data,
+                    success: function (data) {
+                        console.log("Success");
+                        location.reload();
+                    },
+                    error: function (data) {
+                        console.log("Error");
+                    }
+                });
             });
         </script>
     }

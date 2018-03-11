@@ -67,9 +67,9 @@ namespace ProfessionalPartnerships.Web.Controllers
                     StartDate = s.StartDate,
                     EndDate = s.EndDate,
                     IsActive = s.IsActive,
-                    EnrollmentCount = 
+                    EnrollmentCount =
                         s.Enrollments != null
-                        ? s.Enrollments.Count(c => c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Applied 
+                        ? s.Enrollments.Count(c => c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Applied
                                                 || c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Approved)
                         : 0,
                     MaximumStudentCount = s.MaximumStudentCount,
@@ -125,7 +125,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 .Where(w => w.ProgramId == vm.ProgramId)
                 .Select(s => new Models.AdminViewModels.Enrollments.EnrollmentsViewModel(s))
                 .ToList();
-        
+
             return View(vm);
         }
 
@@ -204,33 +204,49 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApproveEnrollment(string id)
+        public bool ApproveEnrollment(string id)
         {
-            var enrollmentId = int.Parse(id);
-            var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
-            enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Approved;
+            var success = false;
 
-            _db.Update(enrollment);
-            _db.SaveChanges();
-            
-            return View();
+            try
+            {
+                var enrollmentId = int.Parse(id);
+                var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
+                enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Approved;
+
+                _db.Update(enrollment);
+                _db.SaveChanges();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return success;
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeclineEnrollment(string id)
+        public bool DeclineEnrollment(string id)
         {
-            var enrollmentId = int.Parse(id);
-            var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
-            enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Declined;
+            var success = false;
 
-            _db.Update(enrollment);
-            _db.SaveChanges();
+            try
+            {
+                var enrollmentId = int.Parse(id);
+                var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
+                enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Declined;
 
-            return View();
+                _db.Update(enrollment);
+                _db.SaveChanges();
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return success;
         }
 
         [HttpGet]
