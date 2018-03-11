@@ -9,10 +9,15 @@
     <div class="panel-body">
         <div class="row" id="ManageUserFilter">
             <div class="col-lg-3 col-md-3 col-sm-3">
-                Roles Filter
+                <select class="form-control" id="roleFilter">
+                    <option value="">Show All</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="Professional">Professional</option>
+                    <option value="Student">Student</option>
+                </select>
             </div>
-            <div class="col-lg-3 col-md-3 col-sm-3">Name/Email Filter</div>
-            <div class="col-lg-3 col-md-3 col-sm-3">Is Active Filter</div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><input type="text" id="textFilter" class="form-control" placeholder="Keyword" /></div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><input type="checkbox" id="isActiveFilter" /> Show Active Only</div>
             <div class="col-lg-3 col-md-3 col-sm-3">
                 <div class="btn-group bottom-buffer">
                     <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
@@ -74,11 +79,11 @@
 
                 @foreach (var user in Model.Users)
                 {
-                    <tr>
-                        <td>@user.RoleName</td>
-                        <td>@user.Name</td>
+                    <tr class="userRow">
+                        <td class="role">@user.RoleName</td>
+                        <td class="filterText">@user.Name</td>
                         <td>@user.Email</td>
-                        <td>
+                        <td class="userIsActiveDataCell" data-value="@user.IsActive">
                             @if (user.IsActive)
                             {
                                 <span class="glyphicon glyphicon-thumbs-up"></span>
@@ -109,6 +114,43 @@
                 }
                 $("#invitationForm").validator("update");
             });
+            $("#isActiveFilter").change(function () {
+                $("tr.userRow").removeClass("hide");
+                processFilters();
+            });
+            $("#textFilter").on("keyup",
+                function () {
+                    $("tr.userRow").removeClass("hide");
+                    processFilters();
+                });
+            $("#roleFilter").change(function () {
+                $("tr.userRow").removeClass("hide");
+                processFilters();
+            });
+            function processFilters() {
+                //roles
+                var val1 = $("#roleFilter").val();
+                if (val1 !== "") {
+                    $("td.role").filter(function () {
+                        return $(this).text() !== val1;
+                    }).closest("tr").addClass("hide");
+                }
+
+                //text
+                var val2 = $("#textFilter").val().toLowerCase();
+                if (val2 !== "") {
+                    $("td.filterText").filter(function () {
+                        return ($(this).text().toLowerCase().indexOf(val2) < 0) &&
+                            ($(this).next("td").text().toLowerCase().indexOf(val2) < 0);
+                    }).closest("tr").addClass("hide");
+                }
+
+                //active
+                if ($("#isActiveFilter").is(':checked')) {
+                    $("td.userIsActiveDataCell").filter(function () { return $(this).attr("data-value") === "False" })
+                        .closest("tr").addClass("hide");
+                }
+            }
         });
     </script>
 }
