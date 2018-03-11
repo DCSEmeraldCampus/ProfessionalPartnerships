@@ -117,6 +117,54 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(rows);
         }
 
+        public IActionResult Review(int programId, string note, int stars)
+        {
+            int studentId = GetCurrentStudentId();
+            if (studentId == 0) throw new ApplicationException("Note logged in");
+
+            var existing = Database.StudentReviews.FirstOrDefault(x => x.StudentId == studentId && x.ProgramId == programId);
+            if (existing != null)
+            {
+                throw new ApplicationException("Already reviewed program");
+            }
+
+            Database.StudentReviews.Add(new StudentReviews
+            {
+                ProgramId = programId,
+                StudentId = studentId,
+                Note = note,
+                Stars = stars
+            });
+
+            Database.SaveChanges();
+
+            return RedirectToAction("Programs");
+        }
+
+        public IActionResult ApplyProgram(int programId, string note)
+        {
+            int studentId = GetCurrentStudentId();
+            if (studentId == 0) return Json(new { error = "Not Logged In" });
+
+            var existing = Database.Enrollments.Where(x => x.StudentId == studentId && x.ProgramId == programId).FirstOrDefault();
+            if (existing != null)
+            {
+                return Json(new { error = "Already applied" });
+            }
+
+            Database.Enrollments.Add(new Enrollments
+            {
+                ProgramId = programId,
+                StudentId = studentId,
+                EnrollmentStatusId = 1,
+                Note = note
+            });
+
+            Database.SaveChanges();
+
+  
+            return RedirectToAction("Programs");
+        }
 
 
         /*

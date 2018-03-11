@@ -141,31 +141,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             return Json(AllPrograms());
         }
 
-        [HttpPost]
-        public JsonResult ApplyProgram(int programId, string note)
-        {
-            int studentId = GetCurrentStudentId();
-            if (studentId == 0) return Json(new { error = "Not Logged In" });
 
-            var existing = Database.Enrollments.Where(x => x.StudentId == studentId && x.ProgramId == programId).FirstOrDefault();
-            if (existing != null) {
-                return Json(new { error = "Already applied" });
-            }
-
-            Database.Enrollments.Add(new Enrollments
-            {
-                ProgramId = programId,
-                StudentId = studentId,
-                EnrollmentStatusId = 1,
-                Note = note
-            });
-
-            Database.SaveChanges();
-
-            var result = AllPrograms().Where(x => x.ProgramId == programId).FirstOrDefault();
-
-            return Json(result);
-        }
         */
     }
 }
