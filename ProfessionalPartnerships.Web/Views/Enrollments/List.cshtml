@@ -1,4 +1,4 @@
-﻿@model List<ProfessionalPartnerships.Data.Models.Enrollments>
+﻿@model ProfessionalPartnerships.Web.Models.AdminViewModels.Enrollments.EnrollmentsListViewModel
 
 @{
 	ViewBag.Title = "Manage Enrollments";
@@ -7,33 +7,97 @@
 
 <h2>@ViewBag.Title</h2>
 
+<br />
+
 <div class="table-responsive">
 	<table class="table table-hover">
 		<thead>
-		<tr>
-			<th scope="col">ID #</th>
-			<th scope="col">Student Name</th>
-			<th scope="col">Program Name</th>
-			<th scope="col">Status</th>
-		</tr>
+			<tr>
+				<th scope="col">ID #</th>
+				<th scope="col">Student Name</th>
+				<th scope="col">Program Name</th>
+				<th scope="col">Current Status</th>
+				<th scope="col"></th>
+			</tr>
 		</thead>
 
 		<tbody>
-		@foreach (var enrollment in Model)
-		{
-			<tr>
-				<th scope="row">@enrollment.EnrollmentId</th>
-				<td>
-					@(enrollment.Student?.FirstName + " " + enrollment.Student?.LastName)
-				</td>
-				<td>
-					@enrollment.Program?.PointOfContactProfessional?.Company?.Name
-				</td>
-				<td>
-					@enrollment.EnrollmentStatus?.Name
-				</td>
-			</tr>
-		}
+			@if (!Model.Any())
+			{
+				<tr>
+					<td colspan="4"><em>There are currently no enrollments in the system.</em></td>
+				</tr>
+			}
+			@foreach (var enrollment in Model.OrderBy(e => e.EnrollmentStatusId).ThenBy(e => e.StudentName))
+			{
+				<tr>
+					<th scope="row">@enrollment.EnrollmentId</th>
+					<td>
+						@enrollment.StudentName
+					</td>
+					<td>
+						@enrollment.ProgramName
+					</td>
+					<td>
+						@enrollment.EnrollmentStatusName
+					</td>
+					<td>
+						@if (enrollment.EnrollmentStatusId == 1)
+						{
+							<text>
+								<a href="#" class="jq-approve-applicant" data-enrollment-id="@enrollment.EnrollmentId">Approve</a>
+								<br/>
+								<a href="#" class="jq-decline-applicant" data-enrollment-id="@enrollment.EnrollmentId">Decline</a>
+							</text>
+						}
+
+						@if (enrollment.EnrollmentStatusId == 2)
+						{
+							<a href="#" class="jq-decline-applicant" data-enrollment-id="@enrollment.EnrollmentId">Decline</a>
+						}
+	
+						@if (enrollment.EnrollmentStatusId == 3 )
+						{
+							<a href="#" class="jq-approve-applicant" data-enrollment-id="@enrollment.EnrollmentId">Approve</a>
+						}
+					</td>
+				</tr>
+			}
 		</tbody>
 	</table>
 </div>
+
+@section Scripts {
+	<script type="text/javascript">
+		$(function() {
+			var updateEnrollmentStatus = function(el, newStatusId) {
+				const enrollmentId = el.data("enrollment-id");
+
+				const xhr = $.post(
+					'@Url.Action("UpdateEnrollmentStatus")',
+					{ enrollmentId: enrollmentId, newStatusId: newStatusId }
+				);
+
+				xhr.done(function(data) {
+					window.location.reload();
+				});
+
+				xhr.fail(function(data) {
+					alert(data);
+				});
+			}
+
+			$(".jq-approve-applicant").click(function(e) {
+				e.preventDefault();
+
+				updateEnrollmentStatus($(this), 2);
+			});
+
+			$(".jq-decline-applicant").click(function(e) {
+				e.preventDefault();
+
+				updateEnrollmentStatus($(this), 3);
+			});
+		});
+	</script>
+}
