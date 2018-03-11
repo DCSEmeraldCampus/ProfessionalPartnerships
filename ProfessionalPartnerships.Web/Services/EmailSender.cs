@@ -27,7 +27,7 @@ namespace ProfessionalPartnerships.Web.Services
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             var emailAddressValue = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemEmailAddress);
-            var sendGridApiKey = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemSendGridAPIKey);
+            var sendGridApiKey = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemSendGridApiKey);
 
             if (emailAddressValue == null)
             {
