@@ -1,6 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using ProfessionalPartnerships.Web.Services.Interface
+<!DOCTYPE html>
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject IUserAuthorizationService UserAuthorizationService
 <html>
 <head>
     <meta charset="utf-8" />
@@ -70,7 +72,10 @@
                 @if (User.IsInRole("Professional"))
                 {
                     <ul class="nav nav-sidebar">
-                        <li><a href="">Manage Users</a></li>
+                        @if (UserAuthorizationService.IsUserAuthorizedToManageUsers(User))
+                        {
+                            <li><a href="/ProfessionalDashboard/ManageUsers">Manage Users</a></li>
+                        }
                         <li><a href="/ProfessionalDashboard/Programs">My Programs</a></li>
                     </ul>
                 }

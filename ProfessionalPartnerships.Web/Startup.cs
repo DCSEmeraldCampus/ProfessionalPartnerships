@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,7 @@ namespace ProfessionalPartnerships.Web
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IInvitationService, InvitationService>();
+            services.AddTransient<IUserAuthorizationService, UserAuthorizationService>();
 
             services.AddAuthentication().AddGoogle(googleOptions =>
             {
