@@ -181,24 +181,28 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> SearchUsers(SearchUserViewModel SelectedRole)
         {
             SearchUserViewModel model = new SearchUserViewModel();
-            var UserList = _userManager.GetUsersInRoleAsync(SelectedRole.SelectRole);
             model.Applicationuser = new List<ApplicationUser>();
-            if (UserList.Result != null && UserList.Result.Count > 0)
+            if (ModelState.IsValid)
             {
-                foreach (var users in UserList.Result)
+                
+                var UserList = _userManager.GetUsersInRoleAsync(SelectedRole.SelectRole);
+               
+                if (UserList.Result != null && UserList.Result.Count > 0)
                 {
-                    ApplicationUser newUser = new ApplicationUser();
-                    newUser.UserName = users.UserName;
-                    newUser.Id = users.Id;
-                    newUser.Email = users.Email;
-                    model.Applicationuser.Add(newUser);
+                    foreach (var users in UserList.Result)
+                    {
+                        ApplicationUser newUser = new ApplicationUser();
+                        newUser.UserName = users.UserName;
+                        newUser.Id = users.Id;
+                        newUser.Email = users.Email;
+                        model.Applicationuser.Add(newUser);
+                    }
+                }
+                else
+                {
+                    ViewData["Message"] = "No Users found for Selected Role";
                 }
             }
-            else
-            {
-                ViewData["Message"] = "No Users found for Selected Role";
-            }
-
             model.roles = new List<SelectListItem>();
             model.roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
             model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
