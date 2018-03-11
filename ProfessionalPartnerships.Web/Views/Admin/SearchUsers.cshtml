@@ -9,7 +9,7 @@
 
 <form method="post" action="@Url.Action("SearchUsers", "Admin")">
    
-    <div class="form-group">
+    <div class="form-group" style="width:300px;">
         <label asp-for="SelectRole" class="control-label"></label>
         @Html.DropDownListFor(m=>m.SelectRole,Model.roles,"-Select Role-",new { @class="form-control"})
 
@@ -55,6 +55,6 @@
 
 @section Scripts {
     <script>
-      
+       
     </script>
 }
