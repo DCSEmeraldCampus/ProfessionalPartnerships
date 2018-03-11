@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using ProfessionalPartnerships.Web.Services;
+using ProfessionalPartnerships.Web.Services.Interface;
 
 namespace ProfessionalPartnerships.Web.Services
 {

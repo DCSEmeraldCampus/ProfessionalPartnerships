@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using ProfessionalPartnerships.Data.Models;
 using ProfessionalPartnerships.Web.Constants;
+using ProfessionalPartnerships.Web.Services.Interface;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -26,6 +27,7 @@ namespace ProfessionalPartnerships.Web.Services
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             var emailAddressValue = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemEmailAddress);
+            var sendGridApiKey = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemSendGridApiKey);
 
             if (emailAddressValue == null)
             {
