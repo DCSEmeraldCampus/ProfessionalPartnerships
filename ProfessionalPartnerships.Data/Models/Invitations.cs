@@ -9,7 +9,7 @@ namespace ProfessionalPartnerships.Data.Models
         public Guid InvitationCode { get; set; }
         public bool IsActive { get; set; }
         public string Role { get; set; }
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public Companies Company { get; set; }
     }
 }

@@ -24,8 +24,8 @@ namespace ProfessionalPartnerships.Web.Services
         public void CreateInvitation(string emailAddress, string role, int companyId, string websiteRootUrl)
         {
             // create invitation record
-            var preExistingInvitation =  _db.Invitations.FirstOrDefault(x =>
-                x.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase));
+            var preExistingInvitation = _db.Invitations.FirstOrDefault(x =>
+               x.EmailAddress.Equals(emailAddress, StringComparison.CurrentCultureIgnoreCase));
 
             var invitationCode = Guid.NewGuid();
 
@@ -40,7 +40,7 @@ namespace ProfessionalPartnerships.Web.Services
                     EmailAddress = emailAddress,
                     InvitationCode = invitationCode,
                     Role = role,
-                    CompanyId = companyId,
+                    CompanyId = companyId == 0 ? (int?)null : (int?)companyId,
                     IsActive = true
                 });
                 _db.SaveChanges();
