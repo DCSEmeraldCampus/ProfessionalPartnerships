@@ -287,7 +287,7 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             if (id == Guid.Empty)
             {
-                id = Guid.Parse(HttpContext.Session.GetString("InvitationCode"));
+                Guid.TryParse(HttpContext.Session.GetString("InvitationCode"), out id);
             }
             else
             {
