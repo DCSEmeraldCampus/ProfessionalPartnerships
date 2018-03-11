@@ -43,7 +43,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                 .Include(i => i.ProgramType)
                 .Include(i => i.Semester)
                 .Include(i => i.PointOfContactProfessional)
-                .Include(i => i.Enrollments)
+                .Include(i => i.Enrollments).ThenInclude(i => i.EnrollmentStatus)
                 .Select(s => new ProgramsViewModel()
                 {
                     ProgramId = s.ProgramId,
@@ -69,8 +69,7 @@ namespace ProfessionalPartnerships.Web.Controllers
                     IsActive = s.IsActive,
                     EnrollmentCount =
                         s.Enrollments != null
-                        ? s.Enrollments.Count(c => c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Applied
-                                                || c.EnrollmentStatusId == (int)EnrollmentStatusEnum.Approved)
+                        ? s.Enrollments.Count(c => !c.EnrollmentStatus.IsDisregardedInEnrollmentCount ?? false)
                         : 0,
                     MaximumStudentCount = s.MaximumStudentCount,
                     Description = s.Description,
@@ -212,6 +211,24 @@ namespace ProfessionalPartnerships.Web.Controllers
             {
                 var enrollmentId = int.Parse(id);
                 var enrollment = _db.Enrollments.FirstOrDefault(fod => fod.EnrollmentId == enrollmentId);
+
+                // MDT 03-11-18, check that approved is less than maxcount
+                var programId = enrollment?.ProgramId;
+                var program = _db.Programs
+                    .Include(i => i.Enrollments).ThenInclude(i => i.EnrollmentStatus)
+                    .FirstOrDefault(fod=>fod.ProgramId == programId);
+
+                var approvedCount = program?.Enrollments.Count(c => !c.EnrollmentStatus.IsDisregardedInEnrollmentCount ?? false) ?? 0;
+                var maxCount = program?.MaximumStudentCount ?? 0;
+
+                var maxLimitReached = approvedCount >= maxCount;
+
+                if (maxLimitReached)
+                {
+                    // TODO MDT 03-11-18, this will prevent max limit from being exceeded (need to make it fail safer; ie: response message)
+                    throw new NotImplementedException("MaxLimitReached");
+                }
+
                 enrollment.EnrollmentStatusId = (int)EnrollmentStatusEnum.Approved;
 
                 _db.Update(enrollment);

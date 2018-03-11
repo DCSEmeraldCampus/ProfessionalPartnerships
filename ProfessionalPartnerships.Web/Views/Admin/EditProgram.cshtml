@@ -20,9 +20,9 @@
                         <label asp-for="SelectedSemesterId" class="control-label"></label>
 
                         @Html.DropDownListFor(m => m.SelectedSemesterId,
-                                                                                                        Model.SemesterOptions,
-                                                                                                        "- Select a semester -",
-                                                                                                        new { @class = "form-control" })
+                                                                                                             Model.SemesterOptions,
+                                                                                                             "- Select a semester -",
+                                                                                                             new { @class = "form-control" })
 
                         <span asp-validation-for="SelectedSemesterId" class="text-danger"></span>
                     </div>
@@ -30,9 +30,9 @@
                         <label asp-for="SelectedProgramTypeId" class="control-label"></label>
 
                         @Html.DropDownListFor(m => m.SelectedProgramTypeId,
-                                                                                                        Model.ProgramTypeOptions,
-                                                                                                        "- Select a program type -",
-                                                                                                        new { @class = "form-control" })
+                                                                                                             Model.ProgramTypeOptions,
+                                                                                                             "- Select a program type -",
+                                                                                                             new { @class = "form-control" })
 
                         <span asp-validation-for="SelectedProgramTypeId" class="text-danger"></span>
                     </div>
@@ -67,9 +67,9 @@
                         <label asp-for="SelectedPointOfContactProfessionalId" class="control-label"></label>
 
                         @Html.DropDownListFor(m => m.SelectedPointOfContactProfessionalId,
-                                                                                                               Model.PointOfContactProfessionalOptions,
-                                                                                                               "- Select a point of contact -",
-                                                                                                               new { @class = "form-control" })
+                                                                                                                    Model.PointOfContactProfessionalOptions,
+                                                                                                                    "- Select a point of contact -",
+                                                                                                                    new { @class = "form-control" })
 
                         <span asp-validation-for="SelectedPointOfContactProfessionalId" class="text-danger"></span>
                     </div>
@@ -132,7 +132,7 @@
                     </table>
                 </div>
                 <div>
-                    <h5>Approved</h5>
+                    <h5>Approved @Model.EnrollmentsViewModels.Count(w => w.EnrollmentStatusId == Model.EnrollmentStatusId_Approved)/@Model.MaximumStudentCount</h5>
                     <table class="table">
                         <thead>
                             <tr>
@@ -217,7 +217,6 @@
         <script type="text/javascript">
             $("#approveEnrollment").click(function () {
                 var id = $(this).attr("data-value");
-                alert("approveEnrollment; id: " + id);
 
                 var data = { id: id };
                 console.log(data)
@@ -227,8 +226,12 @@
                     url: '@Url.Action("ApproveEnrollment", "Admin")',
                     data: data,
                     success: function (data) {
-                        console.log("Success");
-                        location.reload();
+                        //console.log("Success: " + data);
+                        if (!data) {
+                            alert("Unable to Approve");
+                        } else {
+                            location.reload();
+                        }
                     },
                     error: function (data) {
                         console.log("Error");
@@ -237,7 +240,6 @@
             });
             $("#declineEnrollment").click(function () {
                 var id = $(this).attr("data-value");
-                alert("declineEnrollment; id: " + $(this).attr("data-value"));
 
                 var data = { id: id };
                 console.log(data)
@@ -247,7 +249,7 @@
                     url: '@Url.Action("DeclineEnrollment", "Admin")',
                     data: data,
                     success: function (data) {
-                        console.log("Success");
+                        //console.log("Success");
                         location.reload();
                     },
                     error: function (data) {
