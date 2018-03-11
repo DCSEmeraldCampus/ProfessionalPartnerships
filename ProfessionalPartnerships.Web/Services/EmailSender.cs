@@ -35,9 +35,8 @@ namespace ProfessionalPartnerships.Web.Services
             }
 
             var emailNameValue = _db.ConfigurationValues.FirstOrDefault(configValue => configValue.Key == ConfigurationValueKeys.SystemEmailName);
-
-            var apiKey = Configuration["SENDGRID_APIKEY"];
-            var client = new SendGridClient(apiKey);
+            
+            var client = new SendGridClient(sendGridApiKey.Value);
             var from = new EmailAddress(emailAddressValue.Value, emailNameValue?.Value);
             var to = new EmailAddress(email);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
