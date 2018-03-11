@@ -30,10 +30,10 @@ namespace ProfessionalPartnerships.Web
         public async void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddDbContext<PartnershipsContext>(options =>
-               options.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
