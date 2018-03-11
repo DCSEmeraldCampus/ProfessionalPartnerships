@@ -37,6 +37,20 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public IActionResult ManageUsers()
+        {
+            var u = _userManager.FindByNameAsync(User.Identity.Name);
+            var pro = _db.Professionals.Include(x => x.Company).Include(x=>x.Company.Professionals).FirstOrDefault(x => x.AspNetUserId == u.Result.Id);
+            var model = new ManageCompanyUsersViewModel
+            {
+                CompanyName = pro.Company.Name,
+                CompanyId = pro.CompanyId.Value,
+                Professionals = pro.Company.Professionals
+            };
+            return View(model);
+        }
+
         public async Task<IActionResult> Programs()
         {
             var professional = await GetCurrentProfessinal();
@@ -64,6 +78,43 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(model);
         }
 
+        public IActionResult EditProfessional(int id)
+        {
+            var pro = _db.Professionals.FirstOrDefault(p => p.ProfessionalId == id);
+            if (pro == null)
+            {
+                ViewData.Model = new EditProfessionalViewModel
+                {
+                    ErrorMessage = "The professional could not be found.  Please try again"
+                };
+            }
+            else
+            {
+                ViewData.Model = new EditProfessionalViewModel
+                {
+                    ProfessionalId = pro.ProfessionalId,
+                    FirstName = pro.FirstName,
+                    LastName = pro.LastName,
+                    Email = pro.EmailAddress,
+                    Phone = pro.Phone,
+                    IsActive = pro.IsActive,
+                };
+            }
+            return View();
+        }
+
+        public IActionResult UpdateProfessional(EditProfessionalViewModel professional)
+        {
+            var pro = _db.Professionals.FirstOrDefault(p => p.ProfessionalId == professional.ProfessionalId);
+            pro.FirstName = professional.FirstName;
+            pro.LastName = professional.LastName;
+            pro.EmailAddress = professional.Email;
+            pro.Phone = professional.Phone;
+            pro.IsActive = professional.IsActive;
+            _db.SaveChanges();
+            return RedirectToAction("ManageUsers");
+        }
+
         private async Task<Professionals> GetCurrentProfessinal()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
@@ -75,5 +126,7 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             return professional;
         }
+
+
     }
 }
