@@ -6,7 +6,6 @@ using ProfessionalPartnerships.Web.Models.AdminViewModels.Companies;
 
 namespace ProfessionalPartnerships.Web.Controllers
 {
-    [Route("admin/[controller]/[action]")]
     public class CompaniesController : BaseController
     {
         public CompaniesController(PartnershipsContext db) : base(db) { }
@@ -19,11 +18,11 @@ namespace ProfessionalPartnerships.Web.Controllers
             return View(viewModel);
         }
 
-        [HttpGet("{companyId?}")]
-        public async Task<IActionResult> Edit(int? companyId)
+        [HttpGet()]
+        public async Task<IActionResult> Edit(int? id)
         {
-            var company = companyId.HasValue
-                ? await _db.Companies.Include(x => x.Professionals).SingleOrDefaultAsync(x => x.CompanyId == companyId)
+            var company = id.HasValue
+                ? await _db.Companies.Include(x => x.Professionals).SingleOrDefaultAsync(x => x.CompanyId == id)
                 : new Companies();
 
             var viewModel = new CompaniesViewModel(company);
@@ -34,6 +33,8 @@ namespace ProfessionalPartnerships.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(CompaniesViewModel model)
         {
+            var isEdit = false;
+            Companies c;
             if (!ModelState.IsValid)
             {
                 return View("Edit", model);
@@ -41,13 +42,14 @@ namespace ProfessionalPartnerships.Web.Controllers
 
             if (model.CompanyId != default(int))
             {
-                var company = await _db.Companies.FindAsync(model.CompanyId);
+                isEdit = true;
+                c = await _db.Companies.FindAsync(model.CompanyId);
 
-                model.ApplyTo(company);
+                model.ApplyTo(c);
             }
             else
             {
-                _db.Add(new Companies
+                c = new Companies
                 {
                     Name = model.Name,
                     Address1 = model.Address1,
@@ -56,12 +58,20 @@ namespace ProfessionalPartnerships.Web.Controllers
                     State = model.State,
                     Zip = model.Zip,
                     IsActive = model.IsActive
-                });
+                };
+                _db.Add(c);
             }
 
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("List");
+            if (isEdit)
+            {
+                return RedirectToAction("List");
+            }
+            else
+            {
+                return RedirectToAction("Edit", new {id = c.CompanyId});
+            }
         }
     }
 }

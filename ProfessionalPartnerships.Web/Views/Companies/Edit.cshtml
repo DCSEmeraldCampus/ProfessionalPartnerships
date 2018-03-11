@@ -63,19 +63,21 @@
 
             </section>
         </div>
-        <div class="col-md-4">
-            <section>
-                <h4>Associated Professionals</h4>
-                <table class="table table-hover">
-                    <thead>
+        @if (Model.CompanyId > 0)
+        {
+            <div class="col-md-4">
+                <section>
+                    <h4>Associated Professionals</h4>
+                    <table class="table table-hover">
+                        <thead>
                         <tr>
                             <th scope="col">First Name</th>
                             <th scope="col">Last Name</th>
                             <th scope="col">Primary Contact</th>
                         </tr>
-                    </thead>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
                         @foreach (var professional in Model.AssociatedProfessionals)
                         {
                             <tr>
@@ -86,10 +88,11 @@
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </section>
-            <a href="/Admin/ManageUsers">Add more professionals</a>
-        </div>
+                        </tbody>
+                    </table>
+                </section>
+                <a href="/Admin/ManageUsers">Add more professionals</a>
+            </div>
+        }
     </form>
 </div>

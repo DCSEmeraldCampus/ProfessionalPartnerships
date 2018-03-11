@@ -1,77 +1,108 @@
-﻿@model IEnumerable<ProfessionalPartnerships.Web.Models.AdminViewModels.ProgramsViewModel>
+﻿@using ProfessionalPartnerships.Web.Models.AdminViewModels
+@model ProfessionalPartnerships.Web.Models.AdminViewModels.ManageProgramsViewModel
 
 @{
     ViewData["Title"] = "Manage Programs";
 }
 
-<h2>Programs</h2>
+<div class="panel panel-default top-buffer">
+    <div class="panel-heading">@ViewData["Title"]</div>
+    <div class="panel-body">
+        <div class="row" id="ManageProgramsFilter">
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <select class="form-control" id="programTypeFilter">
+                    <option value="">Show All</option>
+                    @foreach (var programType in Model.ProgramTypes)
+                    {
+                        <option value="@programType.Name">@programType.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><input type="text" id="textFilter" class="form-control" placeholder="Keyword" /></div>
+            <div class="col-lg-3 col-md-3 col-sm-3"><input type="checkbox" id="isActiveFilter" /> Show Active Only</div>
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="btn-group bottom-buffer">
+                    <a href="EditProgram">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-target="#invite" data-toggle="modal">
+                            <span class="glyphicon glyphicon-plus"></span> Create New
+                        </button>
+                    </a>
+                </div>
+            </div>
 
-<p>
-    <a asp-action="CreateProgram">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.ProgramTypeName)</th>
-            <th>@Html.DisplayNameFor(model => model.SemesterName)</th>
-            <th>@Html.DisplayNameFor(model => model.PointOfContactName)</th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AvailabilityDate)
-                </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.StartDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EndDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IsActive)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.MaximumStudentCount)
-                </th>*@
-                <th width="50%">
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                @*<th>
-                    @Html.DisplayNameFor(model => model.IsApproved)
-                </th>*@
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@Html.DisplayFor(modelItem => item.ProgramTypeName)</td>
-            <td>@Html.DisplayFor(modelItem => item.SemesterName)</td>
-            <td>@Html.DisplayFor(modelItem => item.PointOfContactName)</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvailabilityDate)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaximumStudentCount)
-            </td>*@
-            <td width="50%">
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.IsApproved)
-            </td>*@
-            <td>
-                @Html.ActionLink("Edit", "EditProgram", new { id=item.ProgramId }) |
-                @Html.ActionLink("Details", "ProgramDetails", new {  id=item.ProgramId  }) |
-                @Html.ActionLink("Delete", "DeleteProgram", new {  id=item.ProgramId })
-            </td>
-        </tr>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Program Type</th>
+                        <th>Semester</th>
+                        <th>Availability Date</th>
+                        <th>Point of contact</th>
+                        <th width="50%">Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Programs)
+                    {
+                    <tr class="programRow">
+                        <td class="programType">@item.ProgramTypeName</td>
+                        <td>@item.SemesterName</td>
+                        <td>@item.AvailabilityDate.ToShortDateString()</td>
+                        <td class="hide programIsActiveDataCell" data-value="@item.IsActive"></td>
+                        <td class="filterText">@item.PointOfContactName</td>
+                        <td width="50%">
+                            @item.Description
+                        </td>
+                        <td><a href="EditProgram/@item.ProgramId"><button class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span> Edit</button></a></td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#isActiveFilter").change(function () {
+                $("tr.programRow").removeClass("hide");
+                processFilters();
+            });
+            $("#textFilter").on("keyup",
+                function () {
+                    $("tr.programRow").removeClass("hide");
+                    processFilters();
+                });
+            $("#programTypeFilter").change(function () {
+                $("tr.programRow").removeClass("hide");
+                processFilters();
+            });
+            function processFilters() {
+                //roles
+                var val1 = $("#programTypeFilter").val();
+                if (val1 !== "") {
+                    $("td.programType").filter(function () {
+                        return $(this).text() !== val1;
+                    }).closest("tr").addClass("hide");
+                }
+
+                //text
+                var val2 = $("#textFilter").val().toLowerCase();
+                if (val2 !== "") {
+                    $("td.filterText").filter(function () {
+                        return ($(this).text().toLowerCase().indexOf(val2) < 0) &&
+                            ($(this).next("td").text().toLowerCase().indexOf(val2) < 0);
+                    }).closest("tr").addClass("hide");
+                }
+
+                //active
+                if ($("#isActiveFilter").is(':checked')) {
+                    $("td.programIsActiveDataCell").filter(function () { return $(this).attr("data-value") === "False" })
+                        .closest("tr").addClass("hide");
+                }
+            }
+        });
+    </script>
 }
-    </tbody>
-</table>

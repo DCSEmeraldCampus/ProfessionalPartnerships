@@ -8,21 +8,29 @@
 <h3>@ViewData["Message"]</h3>
 
 <div class="row">
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+    }
     <form method="post" action="@Url.Action("UpdateUser", "Admin")">
         <div class="col-md-4">
             <section>
                 <h4>User Details</h4>
-
-
-
                 @Html.AntiForgeryToken()
 
-                @Html.HiddenFor(x => x.UserID)
-                @Html.HiddenFor(x => x.RoleName)
+                @Html.HiddenFor(x => x.UserId)
+                <input type="hidden" name="OriginalRoleName" value="@Model.RoleName" />
 
                 <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for=" FirstName"></label>
+                    <label asp-for="RoleName"></label>
+
+                    @Html.DropDownListFor(m => m.RoleName,
+                             Model.Roles.Select(r => new SelectListItem { Text = r, Value = r }),
+                             new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
                     <input asp-for="FirstName" class="form-control" />
                     <span asp-validation-for="FirstName" class="text-danger"></span>
                 </div>
@@ -35,21 +43,19 @@
                     <label asp-for="Email"></label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
-                </div>               
+                </div>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label asp-for="IsActive">
-                            <input asp-for="IsActive" />
-                            @Html.DisplayNameFor(m => m.IsActive)
-                        </label>
+                    <div class="form-group">
+                        <label asp-for="IsActive" class="control-label"></label>
+                        <input type="checkbox" asp-for="IsActive" class="form-control" />
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success">Update</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
 
             </section>
         </div>
-       
+
     </form>
 </div>
