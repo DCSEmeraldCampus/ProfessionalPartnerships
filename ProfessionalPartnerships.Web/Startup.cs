@@ -31,7 +31,7 @@ namespace ProfessionalPartnerships.Web
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+            
             services.AddDbContext<PartnershipsContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -43,20 +43,11 @@ namespace ProfessionalPartnerships.Web
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddTransient<IInvitationService, InvitationService>();
             services.AddTransient<IUserAuthorizationService, UserAuthorizationService>();
-
-            services.AddAuthentication().AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-            });
-
-            services.AddMvc().AddSessionStateTempDataProvider();
-
-            services.AddSession(); ;
-
+                       
             var serviceProvider = services.BuildServiceProvider();
-            
-            await CreateRoles(serviceProvider);
+            ConfigureGoogleAuthentication(services, serviceProvider.GetRequiredService<PartnershipsContext>());
+
+            await CreateRoles(serviceProvider);            
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider) {
@@ -75,9 +66,20 @@ namespace ProfessionalPartnerships.Web
                     };
                     await roleManager.CreateAsync(role);
                 }
-            }
-            
+            }        
 
+        }
+
+        private void ConfigureGoogleAuthentication(IServiceCollection services, PartnershipsContext db)
+        {
+            services.AddAuthentication().AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = db.ConfigurationValues.FirstOrDefault(x => x.Key == ProfessionalPartnerships.Web.Constants.ConfigurationValueKeys.SystemGoogleClientId).Value; 
+                googleOptions.ClientSecret = db.ConfigurationValues.FirstOrDefault(x => x.Key == ProfessionalPartnerships.Web.Constants.ConfigurationValueKeys.SystemClientSecret).Value;
+            });
+            services.AddMvc().AddSessionStateTempDataProvider();
+
+            services.AddSession(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
