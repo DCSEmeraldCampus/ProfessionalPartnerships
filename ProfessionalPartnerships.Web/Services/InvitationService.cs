@@ -90,7 +90,8 @@ namespace ProfessionalPartnerships.Web.Services
                 {
                     FirstName = firstName,
                     LastName = lastName,
-                    //IsActive = true,
+                    IsActive = true,
+                    EmailAddress = emailAddress,
                     AspNetUserId = aspNetUserId
                 });
             }
