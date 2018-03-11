@@ -1,0 +1,64 @@
+﻿@model IEnumerable<ProfessionalPartnerships.Web.Models.StudentViewModels.ProgramViewModel>
+
+@{
+    ViewData["Title"] = "Apply to Programs";
+}
+
+
+<div class="clearfix">
+
+  <h3>Programs</h3>
+
+  <br />
+
+  <div class="form-inline">
+    <div class="form-group">
+      <label for="chk0">Semester</label><select class="form-control">
+        <option></option>
+        <option>Spring 2019</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="chk1">Type</label><select class="form-control">
+        <option></option>
+        <option>Live Presentation</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="chk2">Description</label><input type="text" size="5" class="form-control">
+    </div>
+    <div class="form-group">
+      <input type="checkbox" id="chk3" class="form-control">
+      <label for="chk3">My Programs</label>
+    </div>
+  </div>
+
+</div>
+
+<br/>
+
+<table id="ProgramTable" class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Semester</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Max Student Count</th>
+      <th>Enrolled Count</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+          <td>@Html.DisplayFor(modelItem => item.SemesterName)</td>
+          <td>@Html.DisplayFor(modelItem => item.ProgramTypeName)</td>
+          <td>@Html.DisplayFor(modelItem => item.Description)</td>
+          <td>@Html.DisplayFor(modelItem => item.MaximumStudentCount)</td>
+          <td>@Html.DisplayFor(modelItem => item.EnrolledCount)</td>
+          <td><button class="btn btn-primary">Apply</button></td>
+        </tr>
+    }
+  </tbody>
+</table>

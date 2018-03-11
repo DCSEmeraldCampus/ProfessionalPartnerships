@@ -28,4 +28,9 @@
       }, 1500, 'easeInOutExpo');
     }
   });
+
+    // Add star rating
+    $(".rateYo").rateYo({
+        fullStar: true
+    });
 })(jQuery);
