@@ -168,11 +168,11 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> SearchUsers()
         {
             SearchUserViewModel model = new SearchUserViewModel();
-            model.Applicationuser = new List<ApplicationUser>();
-            model.roles = new List<SelectListItem>();
-            model.roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
-            model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
-            model.roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
+            model.AllUsers = new List<UsersViewModel>();
+            model.Roles = new List<SelectListItem>();
+            model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
+            model.Roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
+            model.Roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
             return View(model);
         }
 
@@ -181,32 +181,91 @@ namespace ProfessionalPartnerships.Web.Controllers
         public async Task<IActionResult> SearchUsers(SearchUserViewModel SelectedRole)
         {
             SearchUserViewModel model = new SearchUserViewModel();
-            var UserList = _userManager.GetUsersInRoleAsync(SelectedRole.SelectRole);
-            model.Applicationuser = new List<ApplicationUser>();
-            if (UserList.Result != null && UserList.Result.Count > 0)
+            model.AllUsers = new List<UsersViewModel>();
+            if (ModelState.IsValid)
             {
-                foreach (var users in UserList.Result)
+                switch (SelectedRole.SelectRole)
                 {
-                    ApplicationUser newUser = new ApplicationUser();
-                    newUser.UserName = users.UserName;
-                    newUser.Id = users.Id;
-                    newUser.Email = users.Email;
-                    model.Applicationuser.Add(newUser);
-                }
-            }
-            else
-            {
-                ViewData["Message"] = "No Users found for Selected Role";
-            }
+                    case "Administrator":
+                        var AdminList = _db.Administrators.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+                        if(AdminList!=null && AdminList.Count>0)
+                        {
+                            foreach(var admin in AdminList)
+                            {
+                                UsersViewModel newUser = new UsersViewModel();
+                                newUser.UserName = (admin.FirstName +" "+ admin.LastName).ToString();
+                                newUser.UserID = admin.AdminId;
+                                newUser.Email = admin.EmailAddress;
+                                newUser.RoleName = SelectedRole.SelectRole;
+                                newUser.IsActive = admin.IsActive;
+                                model.AllUsers.Add(newUser);
+                            }
+                           
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "No Users found for Selected Role";
+                        }
+                        break;
+                    case "Professional":
+                        var UserList = _db.Professionals.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+                        if (UserList != null && UserList.Count > 0)
+                        {
+                            foreach (var users in UserList)
+                            {
+                                UsersViewModel newUser = new UsersViewModel();
+                                newUser.UserName = (users.FirstName + " " +users.LastName).ToString();
+                                newUser.UserID = users.ProfessionalId;
+                                newUser.Email = users.EmailAddress;
+                                newUser.RoleName = SelectedRole.SelectRole;
+                                newUser.IsActive = users.IsActive;
+                                model.AllUsers.Add(newUser);
+                            }
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "No Users found for Selected Role";
+                        }
+                        break;
+                    case "Student":
+                        var StudentList = _db.Students.Where(x => x.IsActive == SelectedRole.IsActive).ToList();
+                        if( StudentList!=null && StudentList.Count>0)
+                        {
+                            foreach(var student in StudentList)
+                            {
+                                UsersViewModel newUser = new UsersViewModel();
+                                newUser.UserName = (student.FirstName +" " +student.LastName).ToString();
+                                newUser.UserID = student.StudentId;
+                                newUser.Email = student.EmailAddress;
+                                newUser.RoleName = SelectedRole.SelectRole;
+                               newUser.IsActive = student.IsActive;
+                                model.AllUsers.Add(newUser);
+                            }
+                        }
+                        else
+                        {
+                            ViewData["Message"] = "No Users found for Selected Role";
+                        }
+                        break;
 
-            model.roles = new List<SelectListItem>();
-            model.roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
-            model.roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
-            model.roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
+                        default:
+                        break;
+                }              
+            }
+            model.Roles = new List<SelectListItem>();
+            model.Roles.Add(new SelectListItem { Text = "Administrator", Value = "Administrator" });
+            model.Roles.Add(new SelectListItem { Text = "Professional", Value = "Professional" });
+            model.Roles.Add(new SelectListItem { Text = "Student", Value = "Student" });
             model.SelectRole = SelectedRole.SelectRole;
             return View(model);
         }
 
+        [HttpGet("{UserId?}/{RoleName?}")]
+        public async Task<IActionResult> EditUser(int UserId,string RoleName)
+        {
+           
+            return View();
+        }
 
     }
 }

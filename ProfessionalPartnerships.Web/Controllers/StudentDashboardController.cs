@@ -8,8 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using ProfessionalPartnerships.Web.Models;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ProfessionalPartnerships.Web.Controllers
 {
     public class StudentDashboardController : BaseController
@@ -50,7 +48,7 @@ namespace ProfessionalPartnerships.Web.Controllers
             }
 
             //for testing
-            userId = "8a94b129-c319-4f8c-8cfe-9f07e8a44ae1";
+            //userId = "8a94b129-c319-4f8c-8cfe-9f07e8a44ae1";
             if (userId != null)
             {
                 var myStudent = Database.Students.Where(x => x.AspNetUserId == userId).FirstOrDefault();
@@ -63,7 +61,7 @@ namespace ProfessionalPartnerships.Web.Controllers
         }
 
         //probably should move to a service or repository
-        private IEnumerable<StudentDashboardViewModel> FindPrograms(string keyword)
+        private IEnumerable<StudentDashboardViewModel> AllPrograms()
         {
             int studentId = GetCurrentStudentId();
 
@@ -83,7 +81,11 @@ namespace ProfessionalPartnerships.Web.Controllers
                 EnrolledCount = g.Count(x => x.EnrollmentStatus.IsDisregardedInEnrollmentCount == false)
             });
 
-            var rows = Database.Programs.Include(p => p.ProgramType).GroupJoin(enrollmentTotals,
+            var rows = Database.Programs
+                .Include(p => p.ProgramType)
+                .Include(p=> p.Semester)
+                .Where(p=>p.IsActive)
+                .GroupJoin(enrollmentTotals,
                     p => p.ProgramId,
                     e => e.ProgramId, (p, e) => new { Program = p, Enrollments = e }).SelectMany(
                     e => e.Enrollments.Select(x => x.EnrolledCount).DefaultIfEmpty(),
@@ -94,36 +96,22 @@ namespace ProfessionalPartnerships.Web.Controllers
                     programTypeName = p.Program.ProgramType.Name,
                     programId = p.Program.ProgramId,
                     enrolledCount = ct,
-                    enrollmentStatus = myEnrollments.ContainsKey(p.Program.ProgramId) ? myEnrollments[p.Program.ProgramId] : ""
+                    enrollmentStatus = myEnrollments.ContainsKey(p.Program.ProgramId) ? myEnrollments[p.Program.ProgramId] : "",
+                    semesterName = p.Program.Semester.Name
                 });
 
-            /*
-            //seems to execute once per program
-            var rows = Database.Programs.Include(p => p.ProgramType).Select(p=> new
-                {
-                    description = p.Description,
-                    maximumStudentCount = p.MaximumStudentCount,
-                    programTypeName = p.ProgramType.Name,
-                    enrolledCount = enrollmentTotals.Where(x=>x.ProgramId == p.ProgramId).Select(x=>x.EnrolledCount).FirstOrDefault()
-                });
-            */
-
-            if (!String.IsNullOrEmpty(keyword))
-            {
-                rows = rows.Where(x => x.description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
+            
             return rows;
         }
 
         [HttpPost]
-        public JsonResult GetPrograms(string keyword)
+        public JsonResult GetPrograms()
         {
-            return Json(FindPrograms(keyword));
+            return Json(AllPrograms());
         }
 
         [HttpPost]
-        public JsonResult ApplyProgram(int programId)
+        public JsonResult ApplyProgram(int programId, string note)
         {
             int studentId = GetCurrentStudentId();
             if (studentId == 0) return Json(new { error = "Not Logged In" });
@@ -138,11 +126,12 @@ namespace ProfessionalPartnerships.Web.Controllers
                 ProgramId = programId,
                 StudentId = studentId,
                 EnrollmentStatusId = 1,
+                Note = note
             });
 
             Database.SaveChanges();
 
-            var result = FindPrograms(null).Where(x => x.programId == programId).FirstOrDefault();
+            var result = AllPrograms().Where(x => x.programId == programId).FirstOrDefault();
 
             return Json(result);
         }

@@ -8,5 +8,6 @@
         public int programId { get; set; }
         public int enrolledCount { get; set;  }
         public string enrollmentStatus { get; set; }
+        public string semesterName { get; set; }
     }
 }

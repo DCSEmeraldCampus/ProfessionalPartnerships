@@ -33,3 +33,9 @@
         display: none;
     }
 }
+.top-buffer {
+    margin-top: 15px;
+}
+.bottom-buffer {
+    margin-top: 15px;
+}

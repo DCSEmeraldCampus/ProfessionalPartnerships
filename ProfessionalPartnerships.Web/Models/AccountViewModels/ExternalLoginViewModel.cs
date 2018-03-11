@@ -11,5 +11,8 @@ namespace ProfessionalPartnerships.Web.Models.AccountViewModels
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        public Guid InvitationCode { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

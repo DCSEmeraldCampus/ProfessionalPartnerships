@@ -3,56 +3,87 @@
     ViewData["Title"] = "Student Dashboard";
 }
 
+<style> 
+#ProgramTable { margin-top: 10px; }
+.form-inline > * {
+    margin:5px 10px;
+}
+.form-inline label { margin-right: 5px; }
+</style>
 <h3>Programs</h3>
 
 <div id="react-root"></div>
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Apply to Program</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label id="ProgramName"></label>
+                <br><br>
+                You may optionally enter a comment below for the administrator.
+                <textarea id="Notes" style="width:500px;height:50px"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="Apply" data-dismiss="modal">Apply</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
         var App = React.createClass({
             fetchData: function(keyword) {
                 var ui = this;
-                var params = {}
-                if (ui.state.keyword) {
-                    params.keyword = ui.state.keyword;
-                }
-                $.post('/StudentDashboard/GetPrograms',params).success(function(rows) {
-                    ui.setState({rows:rows});
+                $.post('/StudentDashboard/GetPrograms').success(function(rows) {
+                    ui.setState({rows:rows, allRows: rows});
                 });
             },
             getInitialState: function() {
 
-                this.cols = [
-                    {display:'Type', col:'programTypeName'},
-                    {display:'Description', col:'description'},
+                this.allCols = [
+                    {display:'Semester', col: 'semesterName', filterType: 'select'},
+                    {display:'Type', col:'programTypeName', filterType: 'select'},
+                    {display:'Description', col:'description', filterType: 'text'},
+                    {display:'My Programs', col:'myProgram', filterType: 'checkbox', colHidden: true},
                     {display:'Max Student Count', col: 'maximumStudentCount'},
                     {display:'Enrolled Count', col:'enrolledCount'},
                     {display:'Action', render: this.renderActionCol}];
+
+                this.cols = this.allCols.filter(function(x) { return !x.colHidden})
 
                 return { rows: [] };
             },
             componentDidMount: function() {
                 this.fetchData();
             },
-            setKeyword: function(evt) {
-                this.setState({keyword: evt.target.value})
-            },
             reset: function() {
                 this.setState({keyword:''}, this.fetchData);
             },
             applyProgram: function(row) {
                 var ui = this;
-                var params = { programId : row.programId };
-                $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
-                    if (result.error) {
-                        alert(result.error);
-                        return;
-                    }
-                    Object.keys(result).forEach(function(key) {
-                        row[key] = result[key];
-                    })
-                    ui.setState({rows:ui.state.rows});
-                    console.log(result);
+                $('.modal').modal()
+                $('#ProgramName').text(row['description']);
+                $('#Apply').one("click", function() {
+                    var params = { programId : row.programId, note: $('#Notes').val() };
+                    $.post('/StudentDashboard/ApplyProgram',params).success(function(result) {
+                        if (result.error) {
+                            alert(result.error);
+                            return;
+                        }
+                        Object.keys(result).forEach(function(key) {
+                            row[key] = result[key];
+                        })
+                        ui.setState({rows:ui.state.rows});
+                        $('#Notes').val('');
+                    });
                 });
             },
             renderActionCol: function(row, rowIdx, colIdx) {
@@ -66,6 +97,36 @@
                 }
                 return R("td",{key: 'col' + rowIdx }, actionElement);
             },
+            applyFilter: function(uiCol) {
+                var ui = this;
+                return function(evt) {
+                    uiCol.filterVal = evt.target.value;
+                    var filtered = [];
+                    ui.state.allRows.forEach(function(row) {
+                        var good = true;
+                        ui.allCols.forEach(function(uiCol) {
+                            if (uiCol.filterType == 'select' && uiCol.filterVal) {
+                                if (row[uiCol.col] != uiCol.filterVal) {
+                                    good = false;
+                                }
+                            }
+                            if (uiCol.filterType == 'text' && uiCol.filterVal) {
+                                if (row[uiCol.col].toLowerCase().indexOf(uiCol.filterVal.toLowerCase()) == -1 ) {
+                                    good = false;
+                                }
+                            }
+                            if (uiCol.filterType == 'checkbox') {
+                                //hack for now
+                                if (uiCol.col == 'myProgram' && evt.target.checked && row['enrollmentStatus'] != 'Approved') { good = false }
+                            }
+                        })
+                        if (good) {
+                            filtered.push(row);
+                        }
+                    })
+                    ui.setState({rows:filtered});
+                }
+            },
             render: function () {
                 var ui = this;
                 var makeRows = function() {
@@ -76,19 +137,49 @@
                     })
                 }
                 var makeTable = function() {
-                    return React.createElement("table", { className: "table" },
+                    return React.createElement("table", { id: "ProgramTable", className: "table table-bordered" },
                         Rs("thead",
-                        R("tr", ui.cols.map(function (col, i) { return R("td", {key: i}, col.display) }))),
+                        R("tr", ui.cols.map(function (col, i) { return R("th", {key: i}, col.display) }))),
                         R("tbody",makeRows())
                     );
                 }
                 var makeFilters = function() {
-                    return Rs("div",
-                                R("label", "Keyword"),
-                                R("input", {type: 'text', value: ui.state.keyword, onChange: ui.setKeyword}),
-                                R("button",{onClick: function() { ui.fetchData()}, className:"btn btn-primary" }, "Search"),
-                                R("button",{onClick: ui.reset, className:"btn btn-secondary" }, "Reset")
-                    );
+                    var filterElements = [];
+                    ui.allCols.forEach(function(uiCol,k) {
+                        if (!uiCol.filterType) return;
+                        var label = R("label", {htmlFor: 'chk'+k}, uiCol.display);
+
+                        var args = ["div", {className: "form-group"}]
+                        if (uiCol.filterType == 'select') {
+                            args.push(label)
+                            var optionVals = ui.state.rows.reduce(function(dict,row) { dict[row[uiCol.col]] = 1; return dict}, {});
+                            var options = [];
+                            options.push(R("option", {key:"opt0"}));
+
+                            optionVals = Object.keys(optionVals).sort();
+
+                            optionVals.forEach(function(option, idx) {
+                                options.push(R("option", {key: "opt"+(idx+1)}, option))
+                            })
+                            var select = R("select", {className: "form-control", value: uiCol.filterVal, onChange: ui.applyFilter(uiCol)}, options);
+                            args.push(select)
+                        }
+                        else if (uiCol.filterType == 'text') {
+                            args.push(label)
+                            args.push(R("input", {type: 'text', size: "5", className: "form-control", value: uiCol.filterVal, onChange: ui.applyFilter(uiCol)}));
+                        }
+                        else if (uiCol.filterType == 'checkbox') {
+                            args.push(R("input", {type: 'checkbox', id: "chk"+k, className: "form-control", value: uiCol.filterVal, onChange: ui.applyFilter(uiCol)}));
+                            args.push(label);
+                        }
+                        filterElements.push(React.createElement.apply(null, args));
+                    })
+                    return React.createElement.apply(
+                        null,
+                        [
+                            "div",
+                            { className: "form-inline"}
+                        ].concat(filterElements))
                 }
                 return Rs("div",
                     makeFilters(),

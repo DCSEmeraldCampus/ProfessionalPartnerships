@@ -7,6 +7,7 @@ namespace ProfessionalPartnerships.Data.Models
     {
         public Companies()
         {
+            Invitations = new HashSet<Invitations>();
             Professionals = new HashSet<Professionals>();
         }
 
@@ -21,6 +22,7 @@ namespace ProfessionalPartnerships.Data.Models
         public bool IsActive { get; set; }
 
         public Professionals PrimaryProfessional { get; set; }
-        public ICollection<Professionals> Professionals { get; set; }
+        public ICollection<Invitations> Invitations { get; set; }
+        public ICollection<Professionals> Professionals { get; set; }       
     }
 }
