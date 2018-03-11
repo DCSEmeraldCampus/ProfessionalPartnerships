@@ -144,12 +144,12 @@ namespace ProfessionalPartnerships.Web.Controllers
         public IActionResult ApplyProgram(int programId, string note)
         {
             int studentId = GetCurrentStudentId();
-            if (studentId == 0) return Json(new { error = "Not Logged In" });
+            if (studentId == 0) throw new ApplicationException("Not Logged In"); ;
 
             var existing = Database.Enrollments.Where(x => x.StudentId == studentId && x.ProgramId == programId).FirstOrDefault();
             if (existing != null)
             {
-                return Json(new { error = "Already applied" });
+                throw new ApplicationException("Already Applied");
             }
 
             Database.Enrollments.Add(new Enrollments
